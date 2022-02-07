@@ -120,6 +120,9 @@ void AUnrealFPTeam01Character::SetupPlayerInputComponent(class UInputComponent* 
 	// Bind fire event
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AUnrealFPTeam01Character::OnFire);
 
+	//bind Interact event
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AUnrealFPTeam01Character::OnInteract);
+
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
 
@@ -141,7 +144,7 @@ void AUnrealFPTeam01Character::SetupPlayerInputComponent(class UInputComponent* 
 void AUnrealFPTeam01Character::OnFire()
 {
 	// try and fire a projectile
-	if (ProjectileClass != nullptr)
+	if (ProjectileClass != nullptr && isFP)
 	{
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
@@ -269,6 +272,43 @@ void AUnrealFPTeam01Character::MoveRight(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
+	}
+}
+
+void AUnrealFPTeam01Character::OnInteract()
+{
+	switch (isFP)
+	{
+		case false:
+			/* Switch from Tabletop Camera to First Person Camera */
+			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this, blendTime, VTBlend_Linear, 0, false);
+
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("First Person Camera %f"), GetWorld()->TimeSeconds));
+			/* Enable Looking and Moving inputs */
+			GetWorld()->GetFirstPlayerController()->SetIgnoreLookInput(false);
+			GetWorld()->GetFirstPlayerController()->SetIgnoreMoveInput(false);
+			/* Disable mouse cursor */
+			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
+
+			isFP = true;
+
+			break;
+		default:
+			/* Switch from First Person Camera to Tabletop Camera */
+			GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(ExternalCam, blendTime, VTBlend_Linear, 0, false);
+
+			if (GEngine)
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Tabletop Camera %f"), GetWorld()->TimeSeconds));
+			/* Disable Looking and Moving inputs */
+			GetWorld()->GetFirstPlayerController()->SetIgnoreLookInput(true);
+			GetWorld()->GetFirstPlayerController()->SetIgnoreMoveInput(true);
+			/* Show the mouse cursor */
+			GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+
+			isFP = false;
+
+			break;
 	}
 }
 

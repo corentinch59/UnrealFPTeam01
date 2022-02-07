@@ -86,6 +86,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint8 bUsingMotionControllers : 1;
 
+	UPROPERTY(EditAnywhere, Category = CameraView)
+	AActor* ExternalCam;
+
+	UPROPERTY(EditAnywhere, Category = CameraView)
+	float blendTime = 2.f;
+
 protected:
 	
 	/** Fires a projectile. */
@@ -99,6 +105,9 @@ protected:
 
 	/** Handles stafing movement, left and right */
 	void MoveRight(float Val);
+
+	/**  */
+	void OnInteract();
 
 	/**
 	 * Called via input to turn at a given rate.
@@ -144,5 +153,8 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+private:
+
+	bool isFP = true;
 };
 
