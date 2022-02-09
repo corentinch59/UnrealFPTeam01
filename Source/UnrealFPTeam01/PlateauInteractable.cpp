@@ -11,12 +11,14 @@ APlateauInteractable::APlateauInteractable()
 	PrimaryActorTick.bCanEverTick = false;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetCollisionObjectType(ECC_GameTraceChannel2);
 	RootComponent = MeshComponent;
 
 	TabletopCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TableTop Camera"));
 	TabletopCamera->SetupAttachment(MeshComponent);
 	TabletopCamera->SetRelativeLocation(FVector(0.f, 0.f, 100.f));
 	TabletopCamera->SetRelativeRotation(FRotator(-90.f,180.f,180.f));
+
 }
 
 void APlateauInteractable::OnOverlapBegin(UPrimitiveComponent* HitComp, AActor* OtherActor,
