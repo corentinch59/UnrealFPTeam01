@@ -19,6 +19,8 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 AUnrealFPTeam01Character::AUnrealFPTeam01Character()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -337,4 +339,11 @@ bool AUnrealFPTeam01Character::EnableTouchscreenMovement(class UInputComponent* 
 	}
 	
 	return false;
+}
+
+void AUnrealFPTeam01Character::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	
 }

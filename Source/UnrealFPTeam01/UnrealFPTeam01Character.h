@@ -90,7 +90,7 @@ public:
 	AActor* ExternalCam;
 
 	UPROPERTY(EditAnywhere, Category = CameraView)
-	float blendTime = 2.f;
+	float blendTime = .5f;
 
 protected:
 	
@@ -152,6 +152,8 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	virtual void Tick(float DeltaSeconds) override;
 
 private:
 
