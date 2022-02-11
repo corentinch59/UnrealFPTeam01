@@ -26,7 +26,6 @@ AEnemy::AEnemy() {
 	sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
 
 	perceptionComp->SetDominantSense(*sightConfig->GetSenseImplementation());
-	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
 	perceptionComp->ConfigureSense(*sightConfig);
 	
 }
@@ -36,16 +35,19 @@ void AEnemy::BeginPlay() {
 
 	this->GetCharacterMovement()->MaxWalkSpeed = movementSpeed;
 
+	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
 	if (this->GetController()->IsA(AAIController::StaticClass())) {
 		AAIController* controller = Cast<AAIController>(this->GetController());
-		perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
+	//	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
 		controller->SetPerceptionComponent(*perceptionComp);
 	}
+	
 	
 }
 
 void AEnemy::OnSeeActor(AActor* actor, FAIStimulus stimulus) {
-	GLog->Log("Log me " + actor->GetName());
+	GLog->Log("see " + actor->GetName());
+	GLog->Log("from " + this->GetName());
 
 
 }

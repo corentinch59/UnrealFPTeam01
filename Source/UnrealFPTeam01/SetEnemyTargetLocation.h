@@ -14,9 +14,6 @@ class UNREALFPTEAM01_API USetEnemyTargetLocation : public UBTTask_BlackboardBase
 public:
 	USetEnemyTargetLocation();
 
-	UPROPERTY(EditAnywhere)
-	FName keyLocationName;
-
 protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;

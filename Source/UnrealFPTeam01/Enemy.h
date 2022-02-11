@@ -29,21 +29,15 @@ public:
     UPROPERTY(EditAnywhere)
     AActor* endPatrolActor;
 
-    /*UPROPERTY(EditAnywhere)
-    TSubclassOf<AAIController> aiController;
-    */
+    UFUNCTION()
+    void OnSeeActor(AActor* actor, FAIStimulus stimulus);
 
-    UPROPERTY(VisibleAnywhere)
-    class UAISenseConfig_Sight* sightConfig;
-    
-
-    UPROPERTY(EditAnywhere)
-        class AAIController* myControlled;
 protected:
 	virtual void BeginPlay() override;
 
 private:
-    UFUNCTION()
-    virtual void OnSeeActor(AActor* actor, FAIStimulus stimulus);
+
+    UPROPERTY()
+    class UAISenseConfig_Sight* sightConfig;
 
 };
