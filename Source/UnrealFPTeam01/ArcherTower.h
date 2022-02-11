@@ -15,4 +15,6 @@ class UNREALFPTEAM01_API AArcherTower : public ATowerBase
 	GENERATED_BODY()
 
 	virtual void Tick(float DeltaSeconds) override;
+
+
 };
