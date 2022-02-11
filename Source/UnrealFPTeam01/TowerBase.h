@@ -3,36 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "UnrealFPTeam01/TowerProjectile.h"
+#include "GameFramework/Pawn.h"
 #include "TowerBase.generated.h"
 
 UCLASS()
-class UNREALFPTEAM01_API ATowerBase : public AActor
+class UNREALFPTEAM01_API ATowerBase : public APawn
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* MeshComponent;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ATowerProjectile> projectile;
-	
-public:	
-	// Sets default values for this actor's properties
+public:
+	// Sets default values for this pawn's properties
 	ATowerBase();
-
-	UPROPERTY(EditAnywhere, Category=TowerStats)
-	int towerHealth;
-
-	UPROPERTY(EditAnywhere, Category=TowerStats)
-	int towerDamage;
-
-	UPROPERTY(EditAnywhere, Category=TowerStats)
-	float rangeRadius;
-
-	UPROPERTY(BlueprintReadWrite)
-	TArray<APawn*> enemiesHit;
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,5 +22,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };
