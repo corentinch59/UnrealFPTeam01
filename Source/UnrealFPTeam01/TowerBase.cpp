@@ -3,6 +3,7 @@
 
 #include "TowerBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 ATowerBase::ATowerBase()
@@ -13,6 +14,15 @@ ATowerBase::ATowerBase()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 
 	RootComponent = MeshComponent;
+
+	ProjectileOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin"));
+	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+
+	TowerHealth = 100;
+	TowerDamage = 1;
+	TowerRangeRadius = 250.f;
+	TowerAttackRate = 1.f;
+
 }
 
 // Called when the game starts or when spawned
@@ -27,12 +37,38 @@ void ATowerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+bool ATowerBase::CheckHit()
+{
 	FVector sphereOrigin = this->GetActorLocation();
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
-	//objectsTypeToQuerry.Add();
+	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 
-	//UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, towerRangeRadius, );
+	TArray<AActor*> actorsToIgnore;
+	actorsToIgnore.Add(this);
+
+	bool bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadius, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+
+	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadius, 40, FColor(255, 0, 0));
+
+	return bHasHit;
+}
+
+void ATowerBase::TowerTakeDamage(int damage)
+{
+	TowerHealth -= damage;
+}
+
+void ATowerBase::DestroyTower()
+{
+	Destroy();
+}
+
+void ATowerBase::SpawnProjectile()
+{
+	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActor<ATowerProjectile>(TowerProjectile, ProjectileOrigin->GetComponentLocation(), MeshComponent->GetComponentRotation());
 }
 
 // Called to bind functionality to input
