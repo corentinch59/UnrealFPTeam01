@@ -9,3 +9,7 @@ void ACannon::Tick(float deltaTime) {
 	
 
 }
+
+void OnSeeActor(AActor* actor, FAIStimulus stimulus) {
+	GLog->Log("cannon see");
+}

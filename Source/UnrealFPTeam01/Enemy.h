@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Perception/AIPerceptionTypes.h"
+#include "AIController.h"
 #include "Enemy.generated.h"
 
 UCLASS()
@@ -21,9 +23,27 @@ public:
     UPROPERTY(EditAnywhere)
     float attackSpeed;
 
+    UPROPERTY(VisibleAnywhere)
+    UAIPerceptionComponent* perceptionComp;
+
+    UPROPERTY(EditAnywhere)
+    AActor* endPatrolActor;
+
+    /*UPROPERTY(EditAnywhere)
+    TSubclassOf<AAIController> aiController;
+    */
+
+    UPROPERTY(VisibleAnywhere)
+    class UAISenseConfig_Sight* sightConfig;
+    
+
+    UPROPERTY(EditAnywhere)
+        class AAIController* myControlled;
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+private:
+    UFUNCTION()
+    virtual void OnSeeActor(AActor* actor, FAIStimulus stimulus);
 
 };

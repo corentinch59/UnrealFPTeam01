@@ -21,5 +21,6 @@ public:
 
 protected:
 	virtual void Tick(float deltaTime) override;
-	
+
+	virtual void OnSeeActor(AActor* actor, FAIStimulus stimulus) override;
 };
