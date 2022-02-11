@@ -115,6 +115,7 @@ bool AUnrealFPTeam01Character::CheckHit()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectsTypeQuery;
 	ObjectsTypeQuery.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2));
 	TArray<AActor*> IgnoredActors;
+	IgnoredActors.Add(this);
 
 	FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
 	FRotator CameraRotation = FirstPersonCameraComponent->GetRelativeRotation();
