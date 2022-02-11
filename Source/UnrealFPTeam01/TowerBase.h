@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "UnrealFPTeam01/TowerProjectile.h"
 #include "TowerBase.generated.h"
 
 UCLASS()
@@ -15,6 +16,13 @@ public:
 	// Sets default values for this pawn's properties
 	ATowerBase();
 
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* MeshComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TSubclassOf<ATowerProjectile> towerProjectile;
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -22,6 +30,18 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+	int towerHealth;
+
+	UPROPERTY(EditAnywhere)
+	int towerDamage;
+
+	UPROPERTY(EditAnywhere)
+	float towerRangeRadius;
+
+	UPROPERTY(EditAnywhere)
+	float towerAttackRate;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
