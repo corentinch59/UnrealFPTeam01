@@ -13,5 +13,5 @@ AUnrealFPTeam01GameMode::AUnrealFPTeam01GameMode()
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 	// use our custom HUD class
-	HUDClass = AUnrealFPTeam01HUD::StaticClass();
+	//HUDClass = AUnrealFPTeam01HUD::StaticClass();
 }
