@@ -6,6 +6,8 @@
 #include "Perception/AISenseConfig.h"	
 #include "Containers/Array.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Cannon.h"
 
 AEnemy::AEnemy() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -37,19 +39,29 @@ void AEnemy::BeginPlay() {
 
 	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
 	if (this->GetController()->IsA(AAIController::StaticClass())) {
-		AAIController* controller = Cast<AAIController>(this->GetController());
-	//	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
-		controller->SetPerceptionComponent(*perceptionComp);
+		aiController = Cast<AAIController>(this->GetController());
+		aiController->SetPerceptionComponent(*perceptionComp);
 	}
-	
-	
 }
 
 void AEnemy::OnSeeActor(AActor* actor, FAIStimulus stimulus) {
 	GLog->Log("see " + actor->GetName());
 	GLog->Log("from " + this->GetName());
+	
+	if (!aiController)
+		return;
+	 
+	aiController->GetBlackboardComponent()->SetValueAsBool(FName("DetectTowers"),stimulus.WasSuccessfullySensed());
 
+	Attack();
+}
 
+void AEnemy::Attack() {
+	GLog->Log("my attack");
+
+	if (this->IsA(Cannon::StaticClass())) {
+
+	}
 }
 
 

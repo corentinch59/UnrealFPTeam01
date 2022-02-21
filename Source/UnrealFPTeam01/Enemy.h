@@ -4,9 +4,10 @@
 #include "GameFramework/Character.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "AIController.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Enemy.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class UNREALFPTEAM01_API AEnemy : public ACharacter
 {
 	GENERATED_BODY()
@@ -29,15 +30,20 @@ public:
     UPROPERTY(EditAnywhere)
     AActor* endPatrolActor;
 
-    UFUNCTION()
-    void OnSeeActor(AActor* actor, FAIStimulus stimulus);
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-
     UPROPERTY()
     class UAISenseConfig_Sight* sightConfig;
 
+    UPROPERTY()
+    AAIController* aiController;
+
+    UFUNCTION()
+    void OnSeeActor(AActor* actor, FAIStimulus stimulus);
+
+    UFUNCTION()
+    virtual void Attack();
 };

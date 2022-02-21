@@ -21,4 +21,6 @@ public:
 
 protected:
 	virtual void Tick(float deltaTime) override;
+
+	void Shoot();
 };
