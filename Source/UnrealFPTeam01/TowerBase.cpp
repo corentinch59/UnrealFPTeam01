@@ -3,6 +3,7 @@
 
 #include "TowerBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -29,7 +30,14 @@ ATowerBase::ATowerBase()
 void ATowerBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TagOfEndPath, EndPathActors);
+	if(EndPathActors.Num() > 1)
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Too many End Paths ! %f"), GetWorld()->TimeSeconds));
+	}
+
 }
 
 // Called every frame

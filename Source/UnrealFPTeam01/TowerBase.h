@@ -50,6 +50,12 @@ public:
 	TArray<AActor*> ActorsHit;
 
 	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> EndPathActors;
+
+	UPROPERTY(EditAnywhere)
+	FName TagOfEndPath;
+
+	UPROPERTY(BlueprintReadWrite)
 	bool bIsOnRoad;
 
 	UFUNCTION(BlueprintCallable)
