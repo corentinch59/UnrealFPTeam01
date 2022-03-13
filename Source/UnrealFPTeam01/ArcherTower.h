@@ -16,5 +16,8 @@ class UNREALFPTEAM01_API AArcherTower : public ATowerBase
 
 	virtual void Tick(float DeltaSeconds) override;
 
+public:
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnProjectile();
 };

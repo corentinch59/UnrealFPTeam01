@@ -52,7 +52,10 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> EndPathActors;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite)
+	AActor* EndPathActor;
+
+	UPROPERTY(BlueprintReadWrite)
 	FName TagOfEndPath;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -68,7 +71,7 @@ public:
 	void DestroyTower();
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile();
+	AActor* FindTarget(TArray<AActor*>& ActorsArray);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

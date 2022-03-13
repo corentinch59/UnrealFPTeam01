@@ -8,5 +8,14 @@ void AArcherTower::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	CheckHit();
+	if(CheckHit())
+	{
+		AActor* Target = FindTarget(ActorsHit);
+		//GLog->Log(Target->GetName());
+	}
+}
+
+void AArcherTower::SpawnProjectile()
+{
+	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActor<ATowerProjectile>(TowerProjectile, ProjectileOrigin->GetComponentLocation(), MeshComponent->GetComponentRotation());
 }

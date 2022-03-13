@@ -13,17 +13,21 @@ ATowerBase::ATowerBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetCollisionProfileName(TEXT("Custom"));
+	MeshComponent->SetCollisionObjectType(ECC_GameTraceChannel3);
 
 	RootComponent = MeshComponent;
 
 	ProjectileOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin"));
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
+
 
 	TowerHealth = 100;
 	TowerDamage = 1;
 	TowerRangeRadius = 250.f;
 	TowerAttackRate = 1.f;
-
+	TagOfEndPath = "EndPath";
 }
 
 // Called when the game starts or when spawned
@@ -37,7 +41,9 @@ void ATowerBase::BeginPlay()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Too many End Paths ! %f"), GetWorld()->TimeSeconds));
 	}
-
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Found the End Path. %f"), GetWorld()->TimeSeconds));
+	GLog->Log(FString::FromInt(EndPathActors.Num()));
 }
 
 // Called every frame
@@ -53,6 +59,7 @@ bool ATowerBase::CheckHit()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
 	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
 
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
@@ -74,9 +81,29 @@ void ATowerBase::DestroyTower()
 	Destroy();
 }
 
-void ATowerBase::SpawnProjectile()
+AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 {
-	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActor<ATowerProjectile>(TowerProjectile, ProjectileOrigin->GetComponentLocation(), MeshComponent->GetComponentRotation());
+	AActor* Target = ActorsArray[0];
+	FVector closestTarget = Target->GetActorLocation();
+	FVector test = EndPathActors[0]->GetActorLocation();
+	if (ActorsArray.Num() != 0)
+	{
+		for (int i = 0; i < ActorsArray.Num(); i++)
+		{
+			FVector Distance1 = ActorsArray[i]->GetActorLocation() - EndPathActors[0]->GetActorLocation();
+			FVector Distance2 = closestTarget - EndPathActors[0]->GetActorLocation();
+
+			if (Distance1.Size() <= Distance2.Size())
+			{
+				Target = ActorsArray[i];
+				closestTarget = Target->GetActorLocation();
+			}
+		}
+	} else
+	{
+		GLog->Log(FString::FromInt(ActorsArray.Num()));
+	}
+	return Target;
 }
 
 // Called to bind functionality to input
