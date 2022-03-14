@@ -73,6 +73,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AActor* FindTarget(TArray<AActor*>& ActorsArray);
 
+	UFUNCTION(BlueprintCallable)
+	void RotateTowardTarget(AActor* target);
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

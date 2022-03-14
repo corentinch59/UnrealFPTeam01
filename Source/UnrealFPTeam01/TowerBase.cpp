@@ -5,6 +5,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ATowerBase::ATowerBase()
@@ -41,9 +42,16 @@ void ATowerBase::BeginPlay()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Too many End Paths ! %f"), GetWorld()->TimeSeconds));
 	}
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Found the End Path. %f"), GetWorld()->TimeSeconds));
-	GLog->Log(FString::FromInt(EndPathActors.Num()));
+	EndPathActor = EndPathActors[0];
+	if(EndPathActor != nullptr)
+	{
+		GLog->Log(this->GetName() + ": End Path Set");
+	}
+	else
+	{
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Couldn't find End Path ! %f"), GetWorld()->TimeSeconds));
+	}
 }
 
 // Called every frame
@@ -59,7 +67,7 @@ bool ATowerBase::CheckHit()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
 	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
+	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
 
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
@@ -85,13 +93,13 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 {
 	AActor* Target = ActorsArray[0];
 	FVector closestTarget = Target->GetActorLocation();
-	FVector test = EndPathActors[0]->GetActorLocation();
+	FVector test = EndPathActor->GetActorLocation();
 	if (ActorsArray.Num() != 0)
 	{
 		for (int i = 0; i < ActorsArray.Num(); i++)
 		{
-			FVector Distance1 = ActorsArray[i]->GetActorLocation() - EndPathActors[0]->GetActorLocation();
-			FVector Distance2 = closestTarget - EndPathActors[0]->GetActorLocation();
+			FVector Distance1 = ActorsArray[i]->GetActorLocation() - EndPathActor->GetActorLocation();
+			FVector Distance2 = closestTarget - EndPathActor->GetActorLocation();
 
 			if (Distance1.Size() <= Distance2.Size())
 			{
@@ -104,6 +112,13 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 		GLog->Log(FString::FromInt(ActorsArray.Num()));
 	}
 	return Target;
+}
+
+void ATowerBase::RotateTowardTarget(AActor* target)
+{
+	FRotator RotationToRotate = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), target->GetActorLocation());
+	FRotator newRotation = { 0.f, RotationToRotate.Yaw, 0.f };
+	this->SetActorRotation(newRotation);
 }
 
 // Called to bind functionality to input

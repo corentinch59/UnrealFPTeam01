@@ -14,10 +14,17 @@ class UNREALFPTEAM01_API AArcherTower : public ATowerBase
 {
 	GENERATED_BODY()
 
+public:
+
+	AArcherTower();
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* TowersTower;
+
 	virtual void Tick(float DeltaSeconds) override;
 
 public:
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile();
+	void SpawnProjectile(AActor* target);
 };
