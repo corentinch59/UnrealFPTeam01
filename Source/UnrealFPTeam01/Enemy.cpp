@@ -7,7 +7,7 @@
 #include "Containers/Array.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Cannon.h"
+#include "RangeEnemy.h"
 #include "TowerBase.h"
 
 AEnemy::AEnemy() {
@@ -20,7 +20,7 @@ AEnemy::AEnemy() {
 	perceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));
 
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	sightConfig->SightRadius = 690.f;
+	sightConfig->SightRadius = /*690.f*/520.f;
 	sightConfig->LoseSightRadius = sightConfig->SightRadius + 500.f;
 	sightConfig->PeripheralVisionAngleDegrees = 90.f;
 	sightConfig->SetMaxAge(5.f);
@@ -62,12 +62,12 @@ void AEnemy::OnSeeActor(AActor* actor, FAIStimulus stimulus) {
 
 void AEnemy::Attack(ATowerBase* tower) {
 
-	if (this->IsA(ACannon::StaticClass())) {
-		ACannon* cannon = Cast<ACannon>(this);
+	if (this->IsA(ARangeEnemy::StaticClass())) {
+		ARangeEnemy* rangeEnemy = Cast<ARangeEnemy>(this);
 		targetTower = tower;
 		isAttacking = true;
-		cannon->ballSpawnPosition = cannon->GetActorLocation() + cannon->GetActorRightVector() * -1 * 40;
-		cannon->Shoot();
+		rangeEnemy->ballSpawnPosition = rangeEnemy->GetActorLocation() + rangeEnemy->GetActorRightVector() * -1 * 70;
+		rangeEnemy->Shoot();
 	}
 
 	

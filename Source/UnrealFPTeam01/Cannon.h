@@ -28,6 +28,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	FVector ballSpawnPosition;
 
+	UPROPERTY(EditAnywhere)
+	class UMaterial* ballMaterial;
+
 	void Shoot();
 
 	void Reload();
