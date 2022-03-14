@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Cannon.h"
+#include "TowerBase.h"
 
 AEnemy::AEnemy() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -19,7 +20,7 @@ AEnemy::AEnemy() {
 	perceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));
 
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	sightConfig->SightRadius = 1000.f;
+	sightConfig->SightRadius = 690.f;
 	sightConfig->LoseSightRadius = sightConfig->SightRadius + 500.f;
 	sightConfig->PeripheralVisionAngleDegrees = 90.f;
 	sightConfig->SetMaxAge(5.f);
@@ -29,6 +30,7 @@ AEnemy::AEnemy() {
 
 	perceptionComp->SetDominantSense(*sightConfig->GetSenseImplementation());
 	perceptionComp->ConfigureSense(*sightConfig);
+ 
 	
 }
 
@@ -45,23 +47,29 @@ void AEnemy::BeginPlay() {
 }
 
 void AEnemy::OnSeeActor(AActor* actor, FAIStimulus stimulus) {
+	
+	ATowerBase* tower = Cast<ATowerBase>(actor);
+	if (!aiController || !tower)
+		return;
+
 	GLog->Log("see " + actor->GetName());
 	GLog->Log("from " + this->GetName());
-	
-	if (!aiController)
-		return;
 	 
 	aiController->GetBlackboardComponent()->SetValueAsBool(FName("DetectTowers"),stimulus.WasSuccessfullySensed());
 
-	Attack();
+	Attack(tower);
 }
 
-void AEnemy::Attack() {
-	GLog->Log("my attack");
+void AEnemy::Attack(ATowerBase* tower) {
 
-	if (this->IsA(Cannon::StaticClass())) {
-
+	if (this->IsA(ACannon::StaticClass())) {
+		ACannon* cannon = Cast<ACannon>(this);
+		cannon->targetTower = tower;
+		cannon->isAttacking = true;
+		cannon->Shoot();
 	}
+
+	
 }
 
 

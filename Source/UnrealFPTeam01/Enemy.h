@@ -45,5 +45,5 @@ private:
     void OnSeeActor(AActor* actor, FAIStimulus stimulus);
 
     UFUNCTION()
-    virtual void Attack();
+    virtual void Attack(ATowerBase* tower);
 };

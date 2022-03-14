@@ -6,8 +6,8 @@
 
 
 UCLASS()
-class UNREALFPTEAM01_API ACannon : public AEnemy
-{
+class UNREALFPTEAM01_API ACannon : public AEnemy {
+
 	GENERATED_BODY()
 
 public:
@@ -19,8 +19,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	float ballSpeed;
 
-protected:
-	virtual void Tick(float deltaTime) override;
+	UPROPERTY(VisibleAnywhere)
+	bool isAttacking;
+
+	UPROPERTY(VisibleAnywhere)
+	AActor* targetTower;
 
 	void Shoot();
+
+protected:
+	virtual void Tick(float deltaTime) override;
 };
