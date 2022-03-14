@@ -3,6 +3,7 @@
 
 #include "ArcherTower.h"
 
+#include "Kismet/KismetMathLibrary.h"
 
 
 AArcherTower::AArcherTower()
@@ -27,7 +28,7 @@ void AArcherTower::Tick(float DeltaSeconds)
 	{
 		AActor* Target = FindTarget(ActorsHit);
 		//GLog->Log(Target->GetName());
-		RotateTowardTarget(Target);
+		BalistaRotation(Target);
 		
 	}
 }
@@ -37,4 +38,10 @@ void AArcherTower::SpawnProjectile(AActor* target)
 	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActor<ATowerProjectile>(TowerProjectile, ProjectileOrigin->GetComponentLocation(), MeshComponent->GetComponentRotation());
 	TTowerProjectile->Target = target;
 	TTowerProjectile->ProjectileMovement->HomingTargetComponent = target->FindComponentByClass<USceneComponent>();
+}
+
+void AArcherTower::BalistaRotation(AActor* target)
+{
+	FRotator RotationToRotate = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), target->GetActorLocation());
+	MeshComponent->SetRelativeRotation(RotationToRotate);
 }

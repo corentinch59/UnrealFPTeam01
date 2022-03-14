@@ -28,4 +28,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnProjectile(AActor* target);
+
+	UFUNCTION(BlueprintCallable)
+	void BalistaRotation(AActor* target);
 };
