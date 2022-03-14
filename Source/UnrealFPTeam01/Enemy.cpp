@@ -64,8 +64,9 @@ void AEnemy::Attack(ATowerBase* tower) {
 
 	if (this->IsA(ACannon::StaticClass())) {
 		ACannon* cannon = Cast<ACannon>(this);
-		cannon->targetTower = tower;
-		cannon->isAttacking = true;
+		targetTower = tower;
+		isAttacking = true;
+		cannon->ballSpawnPosition = cannon->GetActorLocation() + cannon->GetActorRightVector() * -1 * 40;
 		cannon->Shoot();
 	}
 

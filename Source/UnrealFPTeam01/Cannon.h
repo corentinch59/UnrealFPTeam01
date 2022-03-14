@@ -14,19 +14,31 @@ public:
 	ACannon();
 
 	UPROPERTY(EditAnywhere)
+	float attackDamage;
+
+	UPROPERTY(EditAnywhere)
 	float reloadTime;
 
 	UPROPERTY(EditAnywhere)
 	float ballSpeed;
 
-	UPROPERTY(VisibleAnywhere)
-	bool isAttacking;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AUnrealFPTeam01Projectile> ballClass;
 
 	UPROPERTY(VisibleAnywhere)
-	AActor* targetTower;
+	FVector ballSpawnPosition;
 
 	void Shoot();
 
+	void Reload();
+
 protected:
 	virtual void Tick(float deltaTime) override;
+
+private:
+	UPROPERTY()
+	float reloadTimer;
+
+	UPROPERTY()
+	FTimerHandle timerHandle;
 };

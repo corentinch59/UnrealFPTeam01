@@ -30,6 +30,12 @@ public:
     UPROPERTY(EditAnywhere)
     AActor* endPatrolActor;
 
+    UPROPERTY(VisibleAnywhere)
+    bool isAttacking;
+
+    UPROPERTY(VisibleAnywhere)
+    AActor* targetTower;
+
 
 protected:
 	virtual void BeginPlay() override;
