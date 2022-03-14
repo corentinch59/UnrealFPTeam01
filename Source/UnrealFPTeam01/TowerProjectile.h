@@ -7,6 +7,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "TowerProjectile.generated.h"
 
+
 UCLASS()
 class UNREALFPTEAM01_API ATowerProjectile : public AActor
 {
@@ -15,6 +16,7 @@ class UNREALFPTEAM01_API ATowerProjectile : public AActor
 public:
 	// Sets default values for this actor's properties
 	ATowerProjectile();
+
 
 	UPROPERTY(EditAnywhere)
 	UProjectileMovementComponent* ProjectileMovement;
@@ -29,6 +31,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		AActor* Target;
 
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

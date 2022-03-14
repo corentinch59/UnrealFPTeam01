@@ -17,6 +17,7 @@ ATowerProjectile::ATowerProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 	ProjectileMovement->InitialSpeed = 1000.f;
+	ProjectileMovement->bIsHomingProjectile = true;
 }
 
 // Called when the game starts or when spawned

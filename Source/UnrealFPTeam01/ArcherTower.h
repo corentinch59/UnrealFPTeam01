@@ -19,11 +19,12 @@ public:
 	AArcherTower();
 
 	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* TowersTower;
+	UStaticMeshComponent* BaseComponent;
 
 	virtual void Tick(float DeltaSeconds) override;
 
-public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATowerProjectile> TowerProjectile;
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnProjectile(AActor* target);
