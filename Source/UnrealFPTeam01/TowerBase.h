@@ -7,6 +7,13 @@
 #include "UnrealFPTeam01/TowerProjectile.h"
 #include "TowerBase.generated.h"
 
+UENUM()
+enum TowerState
+{
+	OnSide	UMETA(DisplayName = "On Side"),
+	OnRoad	UMETA(DisplayName = "On Road")
+};
+
 UCLASS()
 class UNREALFPTEAM01_API ATowerBase : public APawn
 {
@@ -27,6 +34,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+		float AttackCooldown;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -50,13 +59,13 @@ public:
 	TArray<AActor*> EndPathActors;
 
 	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<TowerState> TowerState;
+
+	UPROPERTY(BlueprintReadWrite)
 	AActor* EndPathActor;
 
 	UPROPERTY(BlueprintReadWrite)
 	FName TagOfEndPath;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsOnRoad;
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();

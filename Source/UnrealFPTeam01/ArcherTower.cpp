@@ -18,6 +18,8 @@ AArcherTower::AArcherTower()
 	MeshComponent->SetRelativeLocation(FVector(0, 0, 100.f));
 
 	//TowerProjectile = ATowerProjectile::StaticClass();
+
+	AttackCooldown = 0.f;
 }
 
 void AArcherTower::Tick(float DeltaSeconds)
@@ -29,8 +31,13 @@ void AArcherTower::Tick(float DeltaSeconds)
 		AActor* Target = FindTarget(ActorsHit);
 		//GLog->Log(Target->GetName());
 		BalistaRotation(Target);
-		
+		if(AttackCooldown <= 0.f)
+		{
+			SpawnProjectile(Target);
+			AttackCooldown = 1 / TowerAttackRate;
+		}
 	}
+	AttackCooldown -= GetWorld()->DeltaTimeSeconds;
 }
 
 void AArcherTower::SpawnProjectile(AActor* target)
