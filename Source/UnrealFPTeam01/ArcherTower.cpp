@@ -50,5 +50,6 @@ void AArcherTower::SpawnProjectile(AActor* target)
 void AArcherTower::BalistaRotation(AActor* target)
 {
 	FRotator RotationToRotate = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), target->GetActorLocation());
-	MeshComponent->SetRelativeRotation(RotationToRotate);
+	FRotator newRotation = { 0.f, RotationToRotate.Yaw, 0.f };
+	MeshComponent->SetRelativeRotation(newRotation);
 }
