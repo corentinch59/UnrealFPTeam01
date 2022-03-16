@@ -33,7 +33,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleDefaultsOnly)
-		AActor* Target;
+	AActor* Target;
+
+	UPROPERTY(EditAnywhere)
+	float lifeTime;
+
+	UPROPERTY(EditAnywhere)
+	float ProjectileSpeed;
+
+	UFUNCTION()
+	void InitializeProjectile(AActor* targetToSet);
 
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

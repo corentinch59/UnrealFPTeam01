@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATowerProjectile> TowerProjectile;
 
+	UPROPERTY(EditAnywhere)
+	float ProjectileSpeed;
+
 	UFUNCTION(BlueprintCallable)
 	void SpawnProjectile(AActor* target);
 

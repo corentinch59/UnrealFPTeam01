@@ -14,8 +14,7 @@ ATowerBase::ATowerBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	MeshComponent->SetCollisionProfileName(TEXT("Custom"));
-	MeshComponent->SetCollisionObjectType(ECC_GameTraceChannel3);
+	MeshComponent->SetCollisionProfileName(TEXT("TowerP"));
 
 	RootComponent = MeshComponent;
 
