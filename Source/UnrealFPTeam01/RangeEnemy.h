@@ -15,9 +15,6 @@ public:
 	float attackDamage;
 
 	UPROPERTY(EditAnywhere)
-	float reloadTime;
-
-	UPROPERTY(EditAnywhere)
 	float ballSpeed;
 
 	UPROPERTY(EditAnywhere)
@@ -32,18 +29,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool isCannon;
 
-	void Shoot();
-
-	void Reload();
+	void Attack(ATowerBase* base) override;
 
 protected:
 	virtual void Tick(float deltaTime) override;
 
-private:
-	UPROPERTY()
-		float reloadTimer;
 
-	UPROPERTY()
-		FTimerHandle timerHandle;
 };
 

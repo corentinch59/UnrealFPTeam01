@@ -20,7 +20,7 @@ AEnemy::AEnemy() {
 	perceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));
 
 	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	sightConfig->SightRadius = /*690.f*/520.f;
+	sightConfig->SightRadius = 690.f   /*520.f*/;
 	sightConfig->LoseSightRadius = sightConfig->SightRadius + 500.f;
 	sightConfig->PeripheralVisionAngleDegrees = 90.f;
 	sightConfig->SetMaxAge(5.f);
@@ -40,9 +40,15 @@ void AEnemy::BeginPlay() {
 	this->GetCharacterMovement()->MaxWalkSpeed = movementSpeed;
 
 	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
-	if (this->GetController()->IsA(AAIController::StaticClass())) {
+	GLog->Log("begin played enemy");
+
+	//this->AIControllerClass = AAIController::StaticClass();
+
+	if (this->GetController() && this->GetController()->IsA(AAIController::StaticClass())) {
 		aiController = Cast<AAIController>(this->GetController());
 		aiController->SetPerceptionComponent(*perceptionComp);
+		//aiController->RunBehaviorTree();
+		GLog->Log("controller	");
 	}
 }
 
@@ -61,16 +67,20 @@ void AEnemy::OnSeeActor(AActor* actor, FAIStimulus stimulus) {
 }
 
 void AEnemy::Attack(ATowerBase* tower) {
+	targetTower = tower;
+	isAttacking = true;
 
-	if (this->IsA(ARangeEnemy::StaticClass())) {
-		ARangeEnemy* rangeEnemy = Cast<ARangeEnemy>(this);
-		targetTower = tower;
-		isAttacking = true;
-		rangeEnemy->ballSpawnPosition = rangeEnemy->GetActorLocation() + rangeEnemy->GetActorRightVector() * -1 * 70;
-		rangeEnemy->Shoot();
+	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &AEnemy::Reload, 0.1f, true, 0.0f);
+}
+
+void AEnemy::Reload() {
+	reloadTimer += 0.1f;
+
+	if (reloadTimer > reloadTime) {
+		GetWorld()->GetTimerManager().ClearTimer(timerHandle);
+		Attack(targetTower);
+		reloadTimer = 0;
 	}
-
-	
 }
 
 

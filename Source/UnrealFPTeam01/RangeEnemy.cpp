@@ -16,12 +16,16 @@ void ARangeEnemy::Tick(float deltaTime) {
 	}
 }
 
-void ARangeEnemy::Shoot() {
+void ARangeEnemy::Attack(ATowerBase* tower) {
+	targetTower = tower;
+	isAttacking = true;
+	ballSpawnPosition = this->GetActorLocation() + this->GetActorRightVector() * -1 * 70;
+
 	FActorSpawnParameters params;
 
 	AActor* ball = GetWorld()->SpawnActor<AUnrealFPTeam01Projectile>(ballClass, ballSpawnPosition, FRotator(0, 0, 0));
 
-	if(isCannon)
+	if (isCannon)
 		ball->SetActorScale3D(FVector(1.5f, 1.5f, 1.5f));
 
 	UStaticMeshComponent* mesh = Cast<UStaticMeshComponent>(ball->GetComponentByClass(UStaticMeshComponent::StaticClass()));
@@ -34,18 +38,8 @@ void ARangeEnemy::Shoot() {
 
 	moveComp->Velocity = FVector(ballSpeed, 0, 0);
 
-//	GLog->Log("Shoot");
-	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &ARangeEnemy::Reload, 1.0f, true, 0.0f);
+	AEnemy::Attack(tower);
 }
 
-void ARangeEnemy::Reload() {
-	GLog->Log(FString::FromInt(reloadTimer));
-	reloadTimer++;
 
-	if (reloadTimer > reloadTime) {
-		GetWorld()->GetTimerManager().ClearTimer(timerHandle);
-		Shoot();
-		reloadTimer = 0;
-	}
-}
 

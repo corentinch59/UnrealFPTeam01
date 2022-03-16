@@ -8,8 +8,7 @@
 #include "Enemy.generated.h"
 
 UCLASS(Abstract)
-class UNREALFPTEAM01_API AEnemy : public ACharacter
-{
+class UNREALFPTEAM01_API AEnemy : public ACharacter {
 	GENERATED_BODY()
 
 public:
@@ -24,6 +23,9 @@ public:
     UPROPERTY(EditAnywhere)
     float attackSpeed;
 
+    UPROPERTY(EditAnywhere)
+    float reloadTime;
+
     UPROPERTY(VisibleAnywhere)
     UAIPerceptionComponent* perceptionComp;
 
@@ -34,8 +36,13 @@ public:
     bool isAttacking;
 
     UPROPERTY(VisibleAnywhere)
-    AActor* targetTower;
+    ATowerBase* targetTower;
 
+    UFUNCTION()
+    virtual void Attack(ATowerBase* tower);
+
+    UFUNCTION()
+    virtual void Reload();
 
 protected:
 	virtual void BeginPlay() override;
@@ -50,6 +57,9 @@ private:
     UFUNCTION()
     void OnSeeActor(AActor* actor, FAIStimulus stimulus);
 
-    UFUNCTION()
-    virtual void Attack(ATowerBase* tower);
+    UPROPERTY()
+    float reloadTimer;
+
+    UPROPERTY()
+    FTimerHandle timerHandle;
 };
