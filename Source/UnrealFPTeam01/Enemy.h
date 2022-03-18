@@ -17,7 +17,7 @@ public:
     UPROPERTY(EditAnywhere)
     float health;
 
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float movementSpeed;
 
     UPROPERTY(EditAnywhere)
@@ -43,11 +43,15 @@ public:
 
     UFUNCTION()
     virtual void Reload();
-
+    
 protected:
 	virtual void BeginPlay() override;
 
     virtual void Tick(float DeltaTime) override;
+
+    UPROPERTY()
+    FTimerHandle timerHandle;
+
 
 private:
 
@@ -57,8 +61,6 @@ private:
     UPROPERTY()
     float reloadTimer;
 
-    UPROPERTY()
-    FTimerHandle timerHandle;
 
     UPROPERTY()
     USceneComponent* sceneComp;

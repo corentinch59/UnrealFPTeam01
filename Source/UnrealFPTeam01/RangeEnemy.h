@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AUnrealFPTeam01Projectile> ballClass;
 
+	UPROPERTY(EditAnywhere)
+	FVector offsetBallSpawn;
+
 	UPROPERTY(VisibleAnywhere)
 	FVector ballSpawnPosition;
 
