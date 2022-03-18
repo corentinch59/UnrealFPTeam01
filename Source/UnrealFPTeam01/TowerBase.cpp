@@ -22,7 +22,6 @@ ATowerBase::ATowerBase()
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
-
 	TowerHealth = 100;
 	TowerDamage = 1;
 	TowerRangeRadius = 250.f;
