@@ -38,9 +38,9 @@ void AWaveController::SpawnEnemy() {
 
 		AEnemy* enemy = Cast<AEnemy>(GetWorld()->SpawnActor<AEnemy>(actualWave.ennemiesInWave[0], enemySpawn->GetActorLocation(), FRotator(0, 0, 0)));
 		enemy->endPatrolActor = enemyEnd;
-		//enemy->AIControllerClass
 		GLog->Log("Spawn enemy");
 		GetWorld()->GetTimerManager().ClearTimer(timerHandle);
 		waveTimer = 0;
+		SpawnWave();
 	}
 }
