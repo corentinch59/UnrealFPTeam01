@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "UnrealFPTeam01/TowerBase.h"
 #include "UnrealFPTeam01Character.generated.h"
 
 class UInputComponent;
@@ -35,21 +36,9 @@ class AUnrealFPTeam01Character : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* VR_Gun;
 
-	/** Location on VR gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	USceneComponent* VR_MuzzleLocation;
-
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
-
-	/** Motion controller (right hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMotionControllerComponent* R_MotionController;
-
-	/** Motion controller (left hand) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UMotionControllerComponent* L_MotionController;
 
 public:
 	AUnrealFPTeam01Character();
@@ -92,6 +81,9 @@ public:
 	UPROPERTY(EditAnywhere, Category=CameraView)
 	float blendTime = .5f;
 
+	UPROPERTY()
+	ATowerBase* HeldTower;
+
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
 
@@ -103,9 +95,6 @@ public:
 
 
 protected:
-	
-	/** Fires a projectile. */
-	void OnFire();
 
 	/** Resets HMD orientation and position in VR. */
 	void OnResetVR();
@@ -128,31 +117,10 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	struct TouchData
-	{
-		TouchData() { bIsPressed = false;Location=FVector::ZeroVector;}
-		bool bIsPressed;
-		ETouchIndex::Type FingerIndex;
-		FVector Location;
-		bool bMoved;
-	};
-	void BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
-	void EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
-	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
-	TouchData	TouchItem;
-
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
-
-	/* 
-	 * Configures input for touchscreen devices if there is a valid touch interface for doing so 
-	 *
-	 * @param	InputComponent	The input component pointer to bind controls to
-	 * @returns true if touch controls were enabled.
-	 */
-	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
 
 public:
 	/** Returns Mesh1P subobject **/
