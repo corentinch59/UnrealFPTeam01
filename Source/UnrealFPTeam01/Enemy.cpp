@@ -39,7 +39,7 @@ void AEnemy::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	if (aiController && aiController->GetBlackboardComponent()->GetValueAsBool(FName("DetectTowers"))) {
-		Attack();
+		Attack(Cast<ATowerBase>(aiController->GetBlackboardComponent()->GetValueAsObject(FName("DetectedTowers")));
 	}
 
 
