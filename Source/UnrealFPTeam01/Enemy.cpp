@@ -9,6 +9,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "RangeEnemy.h"
 #include "TowerBase.h"
+#include "DrawDebugHelpers.h"
 
 AEnemy::AEnemy() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -16,55 +17,46 @@ AEnemy::AEnemy() {
 	health = 0.f;
 	attackSpeed = 0.f;
 	movementSpeed = 0.f;
-
-	perceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));
-
-	sightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	sightConfig->SightRadius = 690.f   /*520.f*/;
-	sightConfig->LoseSightRadius = sightConfig->SightRadius + 500.f;
-	sightConfig->PeripheralVisionAngleDegrees = 90.f;
-	sightConfig->SetMaxAge(5.f);
-	sightConfig->AutoSuccessRangeFromLastSeenLocation = 900.f;
-	sightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	sightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-
-	perceptionComp->SetDominantSense(*sightConfig->GetSenseImplementation());
-	perceptionComp->ConfigureSense(*sightConfig);
- 
-	
 }
 
 void AEnemy::BeginPlay() {
 	Super::BeginPlay();	
 
 	this->GetCharacterMovement()->MaxWalkSpeed = movementSpeed;
-
-	perceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemy::OnSeeActor);
 	GLog->Log("begin played enemy");
 
 	//this->AIControllerClass = AAIController::StaticClass();
 
 	if (this->GetController() && this->GetController()->IsA(AAIController::StaticClass())) {
 		aiController = Cast<AAIController>(this->GetController());
-		aiController->SetPerceptionComponent(*perceptionComp);
 		//aiController->RunBehaviorTree();
 		GLog->Log("controller	");
 	}
+
 }
 
-void AEnemy::OnSeeActor(AActor* actor, FAIStimulus stimulus) {
+void AEnemy::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (aiController && aiController->GetBlackboardComponent()->GetValueAsBool(FName("DetectTowers"))) {
+		Attack();
+	}
+
+
+	/*DrawDebugLine(GetWorld(),Start,End,FColor::Green,false,1,0,1);
+	bool IsSight = GetWorld()->LineTraceSingleByChannel(result,Start,End,ECC_Visibility,CollisionsParams);
+
+	if (IsSight && result.GetActor()->IsA(ATowerBase::StaticClass())) {
+		GLog->Log("you see me");
+		aiController->GetBlackboardComponent()->SetValueAsBool(FName("DetectTowers"),true);
+
+		Attack(Cast<ATowerBase>(result.GetActor()));
+	}
+
+	*/
 	
-	ATowerBase* tower = Cast<ATowerBase>(actor);
-	if (!aiController || !tower)
-		return;
-
-	GLog->Log("see " + actor->GetName());
-	GLog->Log("from " + this->GetName());
-	 
-	aiController->GetBlackboardComponent()->SetValueAsBool(FName("DetectTowers"),stimulus.WasSuccessfullySensed());
-
-	Attack(tower);
 }
+
 
 void AEnemy::Attack(ATowerBase* tower) {
 	targetTower = tower;

@@ -26,8 +26,8 @@ public:
     UPROPERTY(EditAnywhere)
     float reloadTime;
 
-    UPROPERTY(VisibleAnywhere)
-    UAIPerceptionComponent* perceptionComp;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float sightRange;
 
     UPROPERTY(EditAnywhere)
     AActor* endPatrolActor;
@@ -47,19 +47,19 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+    virtual void Tick(float DeltaTime) override;
+
 private:
-    UPROPERTY()
-    class UAISenseConfig_Sight* sightConfig;
 
     UPROPERTY()
     AAIController* aiController;
-
-    UFUNCTION()
-    void OnSeeActor(AActor* actor, FAIStimulus stimulus);
 
     UPROPERTY()
     float reloadTimer;
 
     UPROPERTY()
     FTimerHandle timerHandle;
+
+    UPROPERTY()
+    USceneComponent* sceneComp;
 };
