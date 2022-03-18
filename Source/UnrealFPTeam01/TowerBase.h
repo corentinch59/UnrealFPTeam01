@@ -7,6 +7,13 @@
 #include "UnrealFPTeam01/TowerProjectile.h"
 #include "TowerBase.generated.h"
 
+UENUM()
+enum TowerState
+{
+	OnSide	UMETA(DisplayName = "On Side"),
+	OnRoad	UMETA(DisplayName = "On Road")
+};
+
 UCLASS()
 class UNREALFPTEAM01_API ATowerBase : public APawn
 {
@@ -20,28 +27,60 @@ public:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	TSubclassOf<ATowerProjectile> towerProjectile;
+	USceneComponent* ProjectileOrigin;
 
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+		float AttackCooldown;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-	int towerHealth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
+	int TowerHealth;
 
-	UPROPERTY(EditAnywhere)
-	int towerDamage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
+	int TowerDamage;
 
-	UPROPERTY(EditAnywhere)
-	float towerRangeRadius;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
+	float TowerRangeRadius;
 
-	UPROPERTY(EditAnywhere)
-	float towerAttackRate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
+	float TowerAttackRate;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> ActorsHit;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> EndPathActors;
+
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<TowerState> TowerState;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* EndPathActor;
+
+	UPROPERTY(BlueprintReadWrite)
+	FName TagOfEndPath;
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckHit();
+
+	UFUNCTION(BlueprintCallable)
+	void TowerTakeDamage(int damage);
+
+	UFUNCTION(BlueprintCallable)
+	void DestroyTower();
+
+	UFUNCTION(BlueprintCallable)
+	AActor* FindTarget(TArray<AActor*>& ActorsArray);
+
+	UFUNCTION(BlueprintCallable)
+	void RotateTowardTarget(AActor* target);
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
