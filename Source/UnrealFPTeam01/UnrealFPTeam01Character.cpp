@@ -42,18 +42,29 @@ AUnrealFPTeam01Character::AUnrealFPTeam01Character()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-	TowerInHand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tower in Hand"));
-	TowerInHand->SetupAttachment(RootComponent);
-
-	HeldTower = nullptr;
-
+	// Get every tower meshes
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ArcherTowerAsset(TEXT("/Game/FirstPerson/GA/Characters/tour_archer"));
-	if (!ArcherTowerAsset.Succeeded())
-		GLog->Log("Couldn't find ArcherTower Asset");
-	else
-		GLog->Log("ArcherTower Asset loaded");
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> KnightTowerAsset(TEXT("/Game/FirstPerson/GA/Characters/chevalier_fix"));
 
-	TowerInHand->SetStaticMesh(ArcherTowerAsset.Object);
+	// Setup the meshes that will be held
+	TowerInHand = CreateDefaultSubobject<USceneComponent>(TEXT("TowerInHand"));
+	TowerInHand->SetupAttachment(RootComponent);
+	TowerInHand->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+
+	// Setup for the ArcherTower
+	TowerInHand->SetRelativeScale3D(FVector(0.15f, 0.15f, 0.15f));
+	TowerInHand->SetRelativeLocation(FVector(-35.f, 27.f, 0.f));
+	TowerInHand->SetRelativeRotation(FRotator(10.f,0.f,0.f));
+
+	ArcherTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArcherTowerMesh"));
+	ArcherTowerMesh->SetupAttachment(RootComponent);
+	ArcherTowerMesh->AttachToComponent(TowerInHand, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
+	ArcherTowerMesh->SetStaticMesh(ArcherTowerAsset.Object);
+
+	KnightTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightTowerMesh"));
+	KnightTowerMesh->SetupAttachment(RootComponent);
+	KnightTowerMesh->AttachToComponent(TowerInHand, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
+	KnightTowerMesh->SetStaticMesh(KnightTowerAsset.Object);
 }
 
 void AUnrealFPTeam01Character::BeginPlay()
@@ -62,11 +73,8 @@ void AUnrealFPTeam01Character::BeginPlay()
 	Super::BeginPlay();
 
 	Mesh1P->SetVisibility(false);
+	ArcherTowerMesh->SetVisibility(false);
 
-	TowerInHand->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-	TowerInHand->SetRelativeScale3D(FVector(0.2f, 0.2f, 0.2f));
-	TowerInHand->SetRelativeLocation(FVector(-30.f, 30.f, 0.f));
-	TowerInHand->SetRelativeRotation(FRotator(10.f,0.f,0.f));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -80,7 +88,6 @@ bool AUnrealFPTeam01Character::CheckHit()
 	IgnoredActors.Add(this);
 
 	FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
-	FRotator CameraRotation = FirstPersonCameraComponent->GetRelativeRotation();
 
 	FVector EndLocation = (FirstPersonCameraComponent->GetForwardVector() * InteractionRange) + CameraLocation;
 
@@ -100,6 +107,9 @@ void AUnrealFPTeam01Character::SetupPlayerInputComponent(class UInputComponent* 
 
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AUnrealFPTeam01Character::OnResetVR);
 
+	// Bind gameplay Input
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AUnrealFPTeam01Character::InteractWObject);
+
 	// Bind movement events
 	PlayerInputComponent->BindAxis("MoveForward", this, &AUnrealFPTeam01Character::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AUnrealFPTeam01Character::MoveRight);
@@ -117,44 +127,6 @@ void AUnrealFPTeam01Character::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
-
-//Commenting this section out to be consistent with FPS BP template.
-//This allows the user to turn without using the right virtual joystick
-
-//void AUnrealFPTeam01Character::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
-//{
-//	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
-//	{
-//		if (TouchItem.bIsPressed)
-//		{
-//			if (GetWorld() != nullptr)
-//			{
-//				UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
-//				if (ViewportClient != nullptr)
-//				{
-//					FVector MoveDelta = Location - TouchItem.Location;
-//					FVector2D ScreenSize;
-//					ViewportClient->GetViewportSize(ScreenSize);
-//					FVector2D ScaledDelta = FVector2D(MoveDelta.X, MoveDelta.Y) / ScreenSize;
-//					if (FMath::Abs(ScaledDelta.X) >= 4.0 / ScreenSize.X)
-//					{
-//						TouchItem.bMoved = true;
-//						float Value = ScaledDelta.X * BaseTurnRate;
-//						AddControllerYawInput(Value);
-//					}
-//					if (FMath::Abs(ScaledDelta.Y) >= 4.0 / ScreenSize.Y)
-//					{
-//						TouchItem.bMoved = true;
-//						float Value = ScaledDelta.Y * BaseTurnRate;
-//						AddControllerPitchInput(Value);
-//					}
-//					TouchItem.Location = Location;
-//				}
-//				TouchItem.Location = Location;
-//			}
-//		}
-//	}
-//}
 
 void AUnrealFPTeam01Character::MoveForward(float Value)
 {
@@ -208,6 +180,23 @@ void AUnrealFPTeam01Character::SwitchCamera()
 		isFP = false;
 
 		break;
+	}
+}
+
+void AUnrealFPTeam01Character::InteractWObject()
+{
+	AActor* ActorHit = Cast<APlateauInteractable>(interactableObj.Actor);
+	if(ActorHit && isFP)
+	{
+		SwitchCamera();
+		return;
+	}
+
+	ATowerBox* TowerBox = Cast<ATowerBox>(interactableObj.Actor);
+	if (TowerBox)
+	{
+		TowerHeldType = TowerBox->BoxType;
+
 	}
 }
 

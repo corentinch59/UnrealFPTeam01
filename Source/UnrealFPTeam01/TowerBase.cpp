@@ -27,6 +27,7 @@ ATowerBase::ATowerBase()
 	TowerRangeRadius = 250.f;
 	TowerAttackRate = 1.f;
 	TagOfEndPath = "EndPath";
+	isActive = true;
 }
 
 // Called when the game starts or when spawned

@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "UnrealFPTeam01/TowerBase.h"
+#include "UnrealFPTeam01/PlateauInteractable.h"
+#include "UnrealFPTeam01/TowerBox.h"
+#include "UnrealFPTeam01/ArcherTower.h"
 #include "UnrealFPTeam01Character.generated.h"
 
 class UInputComponent;
@@ -29,7 +32,13 @@ class AUnrealFPTeam01Character : public ACharacter
 	UCameraComponent* FirstPersonCameraComponent;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* TowerInHand;
+	USceneComponent* TowerInHand;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UStaticMeshComponent* ArcherTowerMesh;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	UStaticMeshComponent* KnightTowerMesh;
 
 public:
 	AUnrealFPTeam01Character();
@@ -57,13 +66,16 @@ public:
 	float blendTime = .5f;
 
 	UPROPERTY()
-	ATowerBase* HeldTower;
+	TEnumAsByte<BoxType> TowerHeldType;
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
 
 	UFUNCTION(BlueprintCallable)
 	void SwitchCamera();
+
+	UFUNCTION(BlueprintCallable)
+	void InteractWObject();
 
 	UPROPERTY(BlueprintReadWrite, Category=CameraView)
 	bool isFP = true;
@@ -76,7 +88,6 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	int nbTowerMax;
-
 
 protected:
 
@@ -123,8 +134,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FHitResult interactableObj;
 
-private:
-
-	
 };
 

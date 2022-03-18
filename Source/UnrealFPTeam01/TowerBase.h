@@ -70,6 +70,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
 
+	UPROPERTY(BlueprintReadWrite)
+	bool isActive;
+
 	UFUNCTION(BlueprintCallable)
 	void TowerTakeDamage(int damage);
 

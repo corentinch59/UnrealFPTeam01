@@ -28,7 +28,7 @@ void AArcherTower::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(CheckHit())
+	if(CheckHit() && isActive)
 	{
 		AActor* Target = FindTarget(ActorsHit);
 		//GLog->Log(Target->GetName());
@@ -59,3 +59,4 @@ void AArcherTower::BalistaRotation(AActor* target)
 	FRotator newRotation = { 0.f, RotationToRotate.Yaw, 0.f };
 	MeshComponent->SetRelativeRotation(newRotation);
 }
+
