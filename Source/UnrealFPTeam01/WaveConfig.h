@@ -12,7 +12,7 @@ struct UNREALFPTEAM01_API FUWaveConfig /*: public UObject*/ {
 public:
 
 	UPROPERTY(EditAnywhere)
-	float waveId;
+	int waveId;
 
 	UPROPERTY(EditAnywhere)
 	TArray<class TSubclassOf<AEnemy>> ennemiesInWave;
