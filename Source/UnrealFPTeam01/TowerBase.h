@@ -40,6 +40,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerHealth;
 
@@ -62,10 +64,22 @@ public:
 	TEnumAsByte<TowerState> TowerState;
 
 	UPROPERTY(BlueprintReadWrite)
+	TArray<UMaterialInterface*> BaseMeshMaterial;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UMaterialInterface* GreenMaterial;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UMaterialInterface* BlueMaterial;
+
+	UPROPERTY(BlueprintReadWrite)
 	AActor* EndPathActor;
 
 	UPROPERTY(BlueprintReadWrite)
 	FName TagOfEndPath;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool isActive;
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
@@ -75,6 +89,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyTower();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetGreenPlacement();
 
 	UFUNCTION(BlueprintCallable)
 	AActor* FindTarget(TArray<AActor*>& ActorsArray);
