@@ -10,7 +10,7 @@ USetEnemyTargetLocation::USetEnemyTargetLocation() {
 void USetEnemyTargetLocation::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) {
 	if (OwnerComp.GetOwner()->GetInstigatorController()->GetPawn()->IsA(AEnemy::StaticClass())) {
 		AEnemy* targetEnemy = Cast<AEnemy>(OwnerComp.GetOwner()->GetInstigatorController()->GetPawn());
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", targetEnemy->endPatrolActor->GetActorLocation());
+	//	OwnerComp.GetBlackboardComponent()->SetValueAsVector("TargetLocation", targetEnemy->endPatrolActor->GetActorLocation());
 		this->FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 	else

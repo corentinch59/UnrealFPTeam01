@@ -26,7 +26,9 @@ void AEnemy::BeginPlay() {
 
 	if (this->GetController() && this->GetController()->IsA(AAIController::StaticClass())) {
 		aiController = Cast<AAIController>(this->GetController());
+		//aiController->RunBehaviorTree();
 	}
+	
 
 }
 
@@ -35,7 +37,8 @@ void AEnemy::Tick(float DeltaTime) {
 
 	if (aiController && aiController->GetBlackboardComponent()->GetValueAsBool(FName("DetectTowers")) && !isAttacking ) {
 		Attack(Cast<ATowerBase>(aiController->GetBlackboardComponent()->GetValueAsObject(FName("DetectedTowers"))));
-	}	
+	}
+
 }
 
 

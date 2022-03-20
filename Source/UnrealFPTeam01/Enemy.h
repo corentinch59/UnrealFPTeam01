@@ -29,9 +29,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float sightRange;
 
-    UPROPERTY(EditAnywhere)
-    AActor* endPatrolActor;
-
     UPROPERTY(VisibleAnywhere)
     bool isAttacking;
 
