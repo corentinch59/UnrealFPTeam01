@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "UnrealFPTeam01/TowerProjectile.h"
+#include "UnrealFPTeam01/Enemy.h"
 #include "TowerBase.generated.h"
 
 UENUM()

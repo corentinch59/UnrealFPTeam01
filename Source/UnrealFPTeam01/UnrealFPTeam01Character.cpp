@@ -192,6 +192,12 @@ void AUnrealFPTeam01Character::InteractWObject()
 		return;
 	}
 
+	if(!isFP)
+	{
+		SwitchCamera();
+		return;
+	}
+
 	ATowerBox* TowerBox = Cast<ATowerBox>(interactableObj.Actor);
 	if (TowerBox)
 	{

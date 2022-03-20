@@ -70,7 +70,7 @@ bool ATowerBase::CheckHit()
 	FVector sphereOrigin = this->GetActorLocation();
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
-	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
 
 	TArray<AActor*> actorsToIgnore;
