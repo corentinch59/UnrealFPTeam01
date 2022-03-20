@@ -22,12 +22,17 @@ ATowerBase::ATowerBase()
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
+	for (int i = 0; i < MeshComponent->GetNumMaterials(); ++i)
+	{
+		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+	}
 
 	TowerHealth = 100;
 	TowerDamage = 1;
 	TowerRangeRadius = 250.f;
 	TowerAttackRate = 1.f;
 	TagOfEndPath = "EndPath";
+	isActive = true;
 }
 
 // Called when the game starts or when spawned
@@ -65,7 +70,7 @@ bool ATowerBase::CheckHit()
 	FVector sphereOrigin = this->GetActorLocation();
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
-	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
 	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
 
 	TArray<AActor*> actorsToIgnore;
@@ -86,6 +91,11 @@ void ATowerBase::TowerTakeDamage(int damage)
 void ATowerBase::DestroyTower()
 {
 	Destroy();
+}
+
+void ATowerBase::SetGreenPlacement()
+{
+	
 }
 
 AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
