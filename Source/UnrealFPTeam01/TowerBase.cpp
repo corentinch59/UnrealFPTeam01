@@ -22,6 +22,11 @@ ATowerBase::ATowerBase()
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
+	for (int i = 0; i < MeshComponent->GetNumMaterials(); ++i)
+	{
+		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+	}
+
 	TowerHealth = 100;
 	TowerDamage = 1;
 	TowerRangeRadius = 250.f;
@@ -86,6 +91,11 @@ void ATowerBase::TowerTakeDamage(int damage)
 void ATowerBase::DestroyTower()
 {
 	Destroy();
+}
+
+void ATowerBase::SetGreenPlacement()
+{
+	
 }
 
 AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)

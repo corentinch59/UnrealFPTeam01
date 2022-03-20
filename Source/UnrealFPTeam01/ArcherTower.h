@@ -18,13 +18,18 @@ public:
 
 	AArcherTower();
 
+	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void SetGreenPlacement() override;
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseComponent;
 
-	virtual void Tick(float DeltaSeconds) override;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ATowerProjectile> TowerProjectile;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UMaterialInterface*> AdditionalMeshMaterials;
 
 	UPROPERTY(EditAnywhere)
 	float ProjectileSpeed;

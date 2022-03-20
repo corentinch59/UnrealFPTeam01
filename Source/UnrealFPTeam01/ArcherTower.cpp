@@ -9,17 +9,22 @@
 AArcherTower::AArcherTower()
 {
 	BaseComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Tower's Tower"));
-	MeshComponent->SetCollisionProfileName(TEXT("TowerP"));
 	BaseComponent->SetCollisionProfileName(TEXT("TowerP"));
 
 	RootComponent = BaseComponent;
 
+	MeshComponent->SetCollisionProfileName(TEXT("TowerP"));
 	MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	MeshComponent->SetRelativeLocation(FVector(0, 0, 100.f));
 
 	ProjectileOrigin->SetRelativeLocation(FVector(26.f, 0.f, 47.f));
 
 	//TowerProjectile = ATowerProjectile::StaticClass();
+
+	for (int i = 0; i < BaseComponent->GetNumMaterials(); ++i)
+	{
+		AdditionalMeshMaterials.Add(BaseComponent->GetMaterial(i));
+	}
 
 	AttackCooldown = 0.f;
 }
@@ -58,5 +63,15 @@ void AArcherTower::BalistaRotation(AActor* target)
 	FRotator RotationToRotate = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), target->GetActorLocation());
 	FRotator newRotation = { 0.f, RotationToRotate.Yaw, 0.f };
 	MeshComponent->SetRelativeRotation(newRotation);
+}
+
+void AArcherTower::SetGreenPlacement()
+{
+	Super::SetGreenPlacement();
+
+	for (int i = 0; i < BaseComponent->GetNumMaterials(); ++i)
+	{
+		
+	}
 }
 
