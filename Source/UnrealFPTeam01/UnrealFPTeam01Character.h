@@ -86,6 +86,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint8 bUsingMotionControllers : 1;
 
+	UPROPERTY(EditAnywhere, Category=CameraView)
+	AActor* ExternalCam;
+
+	UPROPERTY(EditAnywhere, Category=CameraView)
+	float blendTime = .5f;
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckHit();
+
+	UFUNCTION(BlueprintCallable)
+	void SwitchCamera();
+
+	UPROPERTY(BlueprintReadWrite, Category=CameraView)
+	bool isFP = true;
+
+
 protected:
 	
 	/** Fires a projectile. */
@@ -124,7 +140,7 @@ protected:
 	void EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
 	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
 	TouchData	TouchItem;
-	
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -144,5 +160,19 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+	virtual void Tick(float DeltaSeconds) override;
+
+	UPROPERTY(EditAnywhere, Category=Interactions)
+	float InteractionRange = 300.f;
+
+	UPROPERTY(EditAnywhere, Category=Interactions)
+	float InteractionRadius = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FHitResult interactableObj;
+
+private:
+
+	
 };
 

@@ -10,7 +10,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
-#include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "XRMotionControllerBase.h"// for FXRMotionControllerBase::RightHandSourceId
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -19,6 +19,8 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 AUnrealFPTeam01Character::AUnrealFPTeam01Character()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -108,6 +110,23 @@ void AUnrealFPTeam01Character::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
+bool AUnrealFPTeam01Character::CheckHit()
+{
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectsTypeQuery;
+	ObjectsTypeQuery.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel2));
+	TArray<AActor*> IgnoredActors;
+	IgnoredActors.Add(this);
+
+	FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
+	FRotator CameraRotation = FirstPersonCameraComponent->GetRelativeRotation();
+
+	FVector EndLocation = (FirstPersonCameraComponent->GetForwardVector() * InteractionRange) + CameraLocation;
+
+	bool hasHit = UKismetSystemLibrary::SphereTraceSingleForObjects(GetWorld(), CameraLocation, EndLocation, InteractionRadius, ObjectsTypeQuery, false, IgnoredActors, EDrawDebugTrace::None, interactableObj, true);
+
+	return hasHit;
+}
+
 void AUnrealFPTeam01Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
@@ -141,7 +160,7 @@ void AUnrealFPTeam01Character::SetupPlayerInputComponent(class UInputComponent* 
 void AUnrealFPTeam01Character::OnFire()
 {
 	// try and fire a projectile
-	if (ProjectileClass != nullptr)
+	if (ProjectileClass != nullptr && isFP)
 	{
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
@@ -272,6 +291,43 @@ void AUnrealFPTeam01Character::MoveRight(float Value)
 	}
 }
 
+void AUnrealFPTeam01Character::SwitchCamera()
+{
+	switch (isFP)
+	{
+	case false:
+		/* Switch from Tabletop Camera to First Person Camera */
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(this, blendTime, VTBlend_Linear, 0, false);
+
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("First Person Camera %f"), GetWorld()->TimeSeconds));
+		/* Enable Looking and Moving inputs */
+		GetWorld()->GetFirstPlayerController()->SetIgnoreLookInput(false);
+		GetWorld()->GetFirstPlayerController()->SetIgnoreMoveInput(false);
+		/* Disable mouse cursor */
+		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
+
+		isFP = true;
+
+		break;
+	default:
+		/* Switch from First Person Camera to Tabletop Camera */
+		GetWorld()->GetFirstPlayerController()->SetViewTargetWithBlend(ExternalCam, blendTime, VTBlend_Linear, 0, false);
+
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Tabletop Camera %f"), GetWorld()->TimeSeconds));
+		/* Disable Looking and Moving inputs */
+		GetWorld()->GetFirstPlayerController()->SetIgnoreLookInput(true);
+		GetWorld()->GetFirstPlayerController()->SetIgnoreMoveInput(true);
+		/* Show the mouse cursor */
+		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
+
+		isFP = false;
+
+		break;
+	}
+}
+
 void AUnrealFPTeam01Character::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
@@ -297,4 +353,10 @@ bool AUnrealFPTeam01Character::EnableTouchscreenMovement(class UInputComponent* 
 	}
 	
 	return false;
+}
+
+void AUnrealFPTeam01Character::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
 }
