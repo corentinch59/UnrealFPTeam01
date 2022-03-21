@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "UnrealFPTeam01/TowerProjectile.h"
 #include "UnrealFPTeam01/Enemy.h"
+#include "Blueprint/UserWidget.h"
 #include "TowerBase.generated.h"
 
 UENUM()
@@ -45,6 +46,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	int MaxTowerHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerDamage;
