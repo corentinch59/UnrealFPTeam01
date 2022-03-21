@@ -3,6 +3,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "WaveConfig.h"
+#include "Components/SplineComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "Blueprint/UserWidget.h"
 #include "WaveController.generated.h"
 
 UCLASS()
@@ -20,17 +23,41 @@ public:
 	UPROPERTY(EditAnywhere)
 	int actualWaveId;
 
-	UPROPERTY(EditAnywhere)
-	AActor* enemySpawn;
+	UPROPERTY()
+	FVector enemySpawn;
 
-	UPROPERTY(EditAnywhere)
-	AActor* enemyEnd;
+	UPROPERTY()
+	FVector enemyEnd;
 
 	UPROPERTY(EditAnywhere)
 	FUWaveConfig actualWave;
 
 	UPROPERTY(EditAnywhere)
 	float timeBetweenSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float timeBetweenWave;
+
+	UPROPERTY(EditAnywhere)
+	AActor* splineActor;
+
+	UPROPERTY(EditAnywhere)
+	UBehaviorTree* enemyTree;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AController> enemyController;
+
+	UPROPERTY()
+	AAIController* enemyAI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isWaitingWave;
+
+//	UPROPERTY(EditAnywhere)
+//	TSubclassOf<UUserWidget> waveWidget;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnWaitWaveEvent();
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,9 +72,18 @@ private:
 	UFUNCTION()
 	void SpawnEnemy();
 
+	UFUNCTION()
+	void WaitNextWave();
+
 	UPROPERTY()
 	FTimerHandle timerHandle;
 
 	UPROPERTY()
 	float waveTimer;
+
+	UPROPERTY()
+	bool generateWave;
+
+	UPROPERTY()
+	float initTimeBetweenWave;
 };

@@ -3,6 +3,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "DrawDebugHelpers.h"
+
 ARangeEnemy::ARangeEnemy() {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -10,16 +12,15 @@ ARangeEnemy::ARangeEnemy() {
 
 void ARangeEnemy::Tick(float deltaTime) {
 	Super::Tick(deltaTime);
-
-	if (isAttacking) {
-		//this->SetActorRotation(FRotator(0,-90,0), ETeleportType::ResetPhysics);
-	}
 }
 
 void ARangeEnemy::Attack(ATowerBase* tower) {
 	targetTower = tower;
 	isAttacking = true;
-	ballSpawnPosition = this->GetActorLocation() + this->GetActorRightVector() * -1 * 70;
+
+	ballSpawnPosition = (this->GetActorLocation() + offsetBallSpawn) + this->GetActorForwardVector() * -1 * 100;
+
+	DrawDebugLine(GetWorld(), this->GetActorLocation(), ballSpawnPosition, FColor::Green, false, 15, 0, 1);
 
 	FActorSpawnParameters params;
 
@@ -36,10 +37,11 @@ void ARangeEnemy::Attack(ATowerBase* tower) {
 	moveComp->MaxSpeed = ballSpeed;
 	moveComp->ProjectileGravityScale = 0.f;
 
-	moveComp->Velocity = FVector(ballSpeed, 0, 0);
+	moveComp->Velocity = FVector(0, -ballSpeed, 0);
 
-	AEnemy::Attack(tower);
+	Super::Attack(tower);
 }
+
 
 
 
