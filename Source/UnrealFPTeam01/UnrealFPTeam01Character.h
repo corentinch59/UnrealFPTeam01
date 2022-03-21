@@ -4,10 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "UnrealFPTeam01/TowerBase.h"
 #include "UnrealFPTeam01/PlateauInteractable.h"
 #include "UnrealFPTeam01/TowerBox.h"
-#include "UnrealFPTeam01/ArcherTower.h"
 #include "UnrealFPTeam01Character.generated.h"
 
 class UInputComponent;
@@ -17,6 +15,8 @@ class UCameraComponent;
 class UMotionControllerComponent;
 class UAnimMontage;
 class USoundBase;
+class ATowerBase;
+class AArcherTower;
 
 UCLASS(config=Game)
 class AUnrealFPTeam01Character : public ACharacter

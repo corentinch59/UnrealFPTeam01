@@ -5,6 +5,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "UnrealFPTeam01/UnrealFPTeam01Character.h"
+#include "UnrealFPTeam01/PlateauInteractable.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -21,11 +23,6 @@ ATowerBase::ATowerBase()
 	ProjectileOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin"));
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
-
-	for (int i = 0; i < MeshComponent->GetNumMaterials(); ++i)
-	{
-		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
-	}
 
 	TowerHealth = 100;
 	TowerDamage = 1;
@@ -56,6 +53,17 @@ void ATowerBase::BeginPlay()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Couldn't find End Path ! %f"), GetWorld()->TimeSeconds));
 	}
+
+	for (int i = 0; i < MeshComponent->GetNumMaterials(); i++)
+	{
+		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+	}
+
+	/*GLog->Log("Number of Base Materials : " + FString::FromInt(BaseMeshMaterial.Num()));
+	GLog->Log(BaseMeshMaterial[0]->GetName());*/
+
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerRef = static_cast<AUnrealFPTeam01Character*>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -63,6 +71,17 @@ void ATowerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(!PlayerRef->isFP)
+	{
+		if(PlayerController->GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, UnderMouseHit))
+		{
+			if(UnderMouseHit.Actor->IsA(APlateauInteractable::StaticClass()))
+			{
+				this->SetActorLocation(UnderMouseHit.Location);
+				SetGreenPlacement();
+			}
+		}
+	}
 }
 
 bool ATowerBase::CheckHit()
@@ -95,8 +114,34 @@ void ATowerBase::DestroyTower()
 
 void ATowerBase::SetGreenPlacement()
 {
-	
+	for(int i = 0; i < BaseMeshMaterial.Num(); i++)
+	{
+		MeshComponent->SetMaterial(i, GreenMaterial);
+	}
+
+	isActive = false;
 }
+
+void ATowerBase::SetBluePlacement()
+{
+	for (int i = 0; i <BaseMeshMaterial.Num(); i++)
+	{
+		MeshComponent->SetMaterial(i, BlueMaterial);
+	}
+
+	isActive = false;
+}
+
+void ATowerBase::SetMeshMaterials()
+{
+	for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+	{
+		MeshComponent->SetMaterial(i, BaseMeshMaterial[i]);
+	}
+
+	isActive = true;
+}
+
 
 AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 {
@@ -128,12 +173,5 @@ void ATowerBase::RotateTowardTarget(AActor* target)
 	FRotator RotationToRotate = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), target->GetActorLocation());
 	FRotator newRotation = { 0.f, RotationToRotate.Yaw, 0.f };
 	this->SetActorRotation(newRotation);
-}
-
-// Called to bind functionality to input
-void ATowerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 

@@ -9,6 +9,8 @@
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "UnrealFPTeam01/ArcherTower.h"
+#include "UnrealFPTeam01/TowerBase.h"
 #include "MotionControllerComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -190,6 +192,12 @@ void AUnrealFPTeam01Character::InteractWObject()
 	{
 		SwitchCamera();
 		return;
+	}
+
+	if(!isFP)
+	{
+		SwitchCamera();
+			return;
 	}
 
 	ATowerBox* TowerBox = Cast<ATowerBox>(interactableObj.Actor);

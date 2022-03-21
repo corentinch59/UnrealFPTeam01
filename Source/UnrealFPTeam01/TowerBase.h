@@ -7,6 +7,8 @@
 #include "UnrealFPTeam01/TowerProjectile.h"
 #include "TowerBase.generated.h"
 
+class AUnrealFPTeam01Character;
+
 UENUM()
 enum TowerState
 {
@@ -40,8 +42,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerHealth;
 
@@ -56,6 +56,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> ActorsHit;
+
+	UPROPERTY()
+	FHitResult UnderMouseHit;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> EndPathActors;
@@ -78,6 +81,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FName TagOfEndPath;
 
+	UPROPERTY()
+	APlayerController* PlayerController;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	AUnrealFPTeam01Character* PlayerRef;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool isActive;
 
@@ -94,12 +103,15 @@ public:
 	virtual void SetGreenPlacement();
 
 	UFUNCTION(BlueprintCallable)
+	virtual void SetBluePlacement();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetMeshMaterials();
+
+	UFUNCTION(BlueprintCallable)
 	AActor* FindTarget(TArray<AActor*>& ActorsArray);
 
 	UFUNCTION(BlueprintCallable)
 	void RotateTowardTarget(AActor* target);
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };

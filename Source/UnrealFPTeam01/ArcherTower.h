@@ -20,24 +20,30 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void BeginPlay() override;
+
 	virtual void SetGreenPlacement() override;
 
-	UPROPERTY(VisibleAnywhere)
-	UStaticMeshComponent* BaseComponent;
+	virtual void SetBluePlacement() override;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<ATowerProjectile> TowerProjectile;
+	virtual void SetMeshMaterials() override;
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<UMaterialInterface*> AdditionalMeshMaterials;
+		UStaticMeshComponent* BaseComponent;
 
 	UPROPERTY(EditAnywhere)
-	float ProjectileSpeed;
+		TSubclassOf<ATowerProjectile> TowerProjectile;
+
+	UPROPERTY(VisibleAnywhere)
+		TArray<UMaterialInterface*> AdditionalMeshMaterials;
+
+	UPROPERTY(EditAnywhere)
+		float ProjectileSpeed;
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile(AActor* target);
+		void SpawnProjectile(AActor* target);
 
 	UFUNCTION(BlueprintCallable)
-	void BalistaRotation(AActor* target);
+		void BalistaRotation(AActor* target);
 
 };
