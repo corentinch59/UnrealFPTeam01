@@ -17,6 +17,9 @@ public:
     UPROPERTY(EditAnywhere)
     float health;
 
+    UPROPERTY(EditAnywhere)
+    float maxHealth;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float movementSpeed;
 
@@ -40,6 +43,9 @@ public:
 
     UFUNCTION()
     virtual void Reload();
+
+    UFUNCTION()
+    void TakeDamage(float damage);
     
 protected:
 	virtual void BeginPlay() override;

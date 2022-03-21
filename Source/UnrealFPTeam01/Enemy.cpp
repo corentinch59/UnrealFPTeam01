@@ -10,6 +10,7 @@
 #include "RangeEnemy.h"
 #include "TowerBase.h"
 #include "DrawDebugHelpers.h"
+#include "Math/UnrealMathUtility.h"
 
 AEnemy::AEnemy() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -59,6 +60,14 @@ void AEnemy::Reload() {
 		Attack(targetTower);
 		reloadTimer = 0;
 	}
+}
+
+void AEnemy::TakeDamage(float damage) {
+	health -= damage;
+	health = FMath::Clamp(health,0.f,maxHealth);
+
+	if (health == 0)
+		Destroy();
 }
 
 
