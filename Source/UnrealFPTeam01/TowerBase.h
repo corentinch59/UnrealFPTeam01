@@ -37,7 +37,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-		float AttackCooldown;
+	float AttackCooldown;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

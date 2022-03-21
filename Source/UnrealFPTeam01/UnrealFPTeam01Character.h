@@ -43,10 +43,7 @@ class AUnrealFPTeam01Character : public ACharacter
 	USceneComponent* TowerInHand;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* ArcherTowerMesh;
-
-	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* KnightTowerMesh;
+	ATowerBase* TowerHeld;
 
 public:
 	AUnrealFPTeam01Character();
@@ -85,13 +82,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category=CameraView)
 	bool isFP = true;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(EditAnywhere, Category = PlayerStats)
 	int NbTowerOnSide;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(EditAnywhere, Category = PlayerStats)
 	int NbTowerOnRoad;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(EditAnywhere, Category = PlayerStats)
 	int NbTowerMax;
 
 	UPROPERTY(BlueprintReadWrite)

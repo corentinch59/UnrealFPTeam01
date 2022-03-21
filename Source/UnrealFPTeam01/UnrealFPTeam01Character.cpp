@@ -44,31 +44,8 @@ AUnrealFPTeam01Character::AUnrealFPTeam01Character()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-	// Get every tower meshes
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ArcherTowerAsset(TEXT("/Game/FirstPerson/GA/Characters/tour_archer"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> KnightTowerAsset(TEXT("/Game/FirstPerson/GA/Characters/chevalier_fix"));
-
-	// Setup the meshes that will be held
-	TowerInHand = CreateDefaultSubobject<USceneComponent>(TEXT("TowerInHand"));
-	TowerInHand->SetupAttachment(RootComponent);
-	TowerInHand->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-
 	TowerType = None;
 
-	// Setup for the ArcherTower
-	TowerInHand->SetRelativeScale3D(FVector(0.15f, 0.15f, 0.15f));
-	TowerInHand->SetRelativeLocation(FVector(-35.f, 27.f, 0.f));
-	TowerInHand->SetRelativeRotation(FRotator(10.f,0.f,0.f));
-
-	ArcherTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArcherTowerMesh"));
-	ArcherTowerMesh->SetupAttachment(RootComponent);
-	ArcherTowerMesh->AttachToComponent(TowerInHand, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
-	ArcherTowerMesh->SetStaticMesh(ArcherTowerAsset.Object);
-
-	KnightTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightTowerMesh"));
-	KnightTowerMesh->SetupAttachment(RootComponent);
-	KnightTowerMesh->AttachToComponent(TowerInHand, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
-	KnightTowerMesh->SetStaticMesh(KnightTowerAsset.Object);
 }
 
 void AUnrealFPTeam01Character::BeginPlay()
@@ -77,8 +54,6 @@ void AUnrealFPTeam01Character::BeginPlay()
 	Super::BeginPlay();
 
 	Mesh1P->SetVisibility(false);
-	ArcherTowerMesh->SetVisibility(false);
-
 }
 
 //////////////////////////////////////////////////////////////////////////
