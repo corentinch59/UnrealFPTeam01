@@ -26,6 +26,9 @@ public:
     UPROPERTY(EditAnywhere)
     float attackSpeed;
 
+    UPROPERTY(EditAnywhere,BlueprintReadWrite)
+    float attackDamage;
+
     UPROPERTY(EditAnywhere)
     float reloadTime;
 

@@ -12,9 +12,6 @@ public:
 	ARangeEnemy();
 
 	UPROPERTY(EditAnywhere)
-	float attackDamage;
-
-	UPROPERTY(EditAnywhere)
 	float ballSpeed;
 
 	UPROPERTY(EditAnywhere)
@@ -22,6 +19,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FVector offsetBallSpawn;
+
+	UPROPERTY(EditAnywhere)
+	FVector ballSize;
 
 	UPROPERTY(VisibleAnywhere)
 	FVector ballSpawnPosition;
@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool isCannon;
+
+	UPROPERTY(EditAnywhere)
+	AActor* ballStart;
 
 	void Attack(ATowerBase* base) override;
 
