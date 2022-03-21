@@ -42,6 +42,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerHealth;
 
@@ -115,3 +118,4 @@ public:
 	void RotateTowardTarget(AActor* target);
 
 };
+

@@ -54,6 +54,8 @@ void AArcherTower::BeginPlay()
 		AdditionalMeshMaterials.Add(BaseComponent->GetMaterial(i));
 	}
 
+	BaseComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
+
 	/*GLog->Log("Number of Additional materials : " + FString::FromInt(AdditionalMeshMaterials.Num()));
 	GLog->Log(AdditionalMeshMaterials[0]->GetName());*/
 

@@ -53,6 +53,8 @@ AUnrealFPTeam01Character::AUnrealFPTeam01Character()
 	TowerInHand->SetupAttachment(RootComponent);
 	TowerInHand->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 
+	TowerType = None;
+
 	// Setup for the ArcherTower
 	TowerInHand->SetRelativeScale3D(FVector(0.15f, 0.15f, 0.15f));
 	TowerInHand->SetRelativeLocation(FVector(-35.f, 27.f, 0.f));
@@ -203,7 +205,15 @@ void AUnrealFPTeam01Character::InteractWObject()
 	ATowerBox* TowerBox = Cast<ATowerBox>(interactableObj.Actor);
 	if (TowerBox)
 	{
-		TowerHeldType = TowerBox->BoxType;
+		switch (TowerBox->BoxType)
+		{
+		case 0:
+			break;
+		case 1:
+			break;
+		default:
+			break;
+		};
 
 	}
 }

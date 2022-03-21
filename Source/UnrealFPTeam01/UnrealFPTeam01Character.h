@@ -18,6 +18,14 @@ class USoundBase;
 class ATowerBase;
 class AArcherTower;
 
+UENUM()
+enum TowerType
+{
+	None			UMETA(DisplayName = "None"),
+	ArcherTower		UMETA(DisplayName = "Archer Tower"),
+	KnightTower		UMETA(DisplayName = "Knight Tower")
+};
+
 UCLASS(config=Game)
 class AUnrealFPTeam01Character : public ACharacter
 {
@@ -65,9 +73,6 @@ public:
 	UPROPERTY(EditAnywhere, Category=CameraView)
 	float blendTime = .5f;
 
-	UPROPERTY()
-	TEnumAsByte<BoxType> TowerHeldType;
-
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
 
@@ -81,13 +86,16 @@ public:
 	bool isFP = true;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	int TowerOnSide;
+	int NbTowerOnSide;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	int TowerOnRoad;
+	int NbTowerOnRoad;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	int nbTowerMax;
+	int NbTowerMax;
+
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<TowerType> TowerType;
 
 protected:
 

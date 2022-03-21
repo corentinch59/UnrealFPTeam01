@@ -37,6 +37,11 @@ void ATowerBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->bEnableClickEvents = true;
+
+	MeshComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
+
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TagOfEndPath, EndPathActors);
 	if(EndPathActors.Num() > 1)
 	{
@@ -62,7 +67,6 @@ void ATowerBase::BeginPlay()
 	/*GLog->Log("Number of Base Materials : " + FString::FromInt(BaseMeshMaterial.Num()));
 	GLog->Log(BaseMeshMaterial[0]->GetName());*/
 
-	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerRef = static_cast<AUnrealFPTeam01Character*>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
@@ -82,6 +86,12 @@ void ATowerBase::Tick(float DeltaTime)
 			}
 		}
 	}
+}
+
+void ATowerBase::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	SetMeshMaterials();
+	isActive = true;
 }
 
 bool ATowerBase::CheckHit()
