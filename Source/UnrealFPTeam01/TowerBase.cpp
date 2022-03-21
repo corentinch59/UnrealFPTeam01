@@ -70,15 +70,18 @@ bool ATowerBase::CheckHit()
 	FVector sphereOrigin = this->GetActorLocation();
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
-	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
+	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
+	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
 
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
+	actorsToIgnore.Add(EndPathActor);
+	actorsToIgnore.Add(EndPathActors[1]);
 
 	bool bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadius, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
 
 	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadius, 40, FColor(255, 0, 0));
+
 
 	return bHasHit;
 }
@@ -103,6 +106,7 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 	AActor* Target = ActorsArray[0];
 	FVector closestTarget = Target->GetActorLocation();
 	FVector test = EndPathActor->GetActorLocation();
+
 	if (ActorsArray.Num() != 0)
 	{
 		for (int i = 0; i < ActorsArray.Num(); i++)
@@ -120,6 +124,7 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 	{
 		GLog->Log(FString::FromInt(ActorsArray.Num()));
 	}
+
 	return Target;
 }
 

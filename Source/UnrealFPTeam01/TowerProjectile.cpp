@@ -2,6 +2,7 @@
 
 
 #include "TowerProjectile.h"
+#include "Enemy.h"
 
 // Sets default values
 ATowerProjectile::ATowerProjectile()
@@ -50,20 +51,23 @@ void ATowerProjectile::Tick(float DeltaTime)
 	ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
 }
 
-void ATowerProjectile::InitializeProjectile(AActor* targetToSet)
+void ATowerProjectile::InitializeProjectile(AActor* targetToSet,ATowerBase* parent)
 {
 	Target = targetToSet;
+	parentTower = parent;
 }
 
 void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                              FVector NormalImpulse, const FHitResult& Hit)
-{
-	APawn* Pawn = Cast<APawn>(OtherActor);
-	if(Pawn ==  nullptr)
-	{
-		return;
-	}
+{ // Tower Projectile touche un ennemi 
+	AEnemy* enemy = Cast<AEnemy>(OtherActor);
 
+	if(!enemy || !parentTower)
+		return;
+	
+	GLog->Log("attack");
+	enemy->TakeDamage(parentTower->TowerDamage);
+	
 	Destroy();
 }
 
