@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Sound/SoundBase.h"
+#include "Blueprint/UserWidget.h"
+#include "DialogController.h"
 #include "DialogAction.generated.h"
 
 
@@ -30,6 +32,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray <FName> dialogs;
 
+	UPROPERTY(EditAnywhere)
+	ADialogController* dialogController;
+
+	/*UFUNCTION(BlueprintImplementableEvent,Category="Dialog")
+	void OnDialogSpawned(FName dialogName);
+	*/
 protected:
 	virtual void BeginPlay() override;
 

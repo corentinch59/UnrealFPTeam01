@@ -1,4 +1,5 @@
 #include "DialogAction.h"
+#include "ArcherTower.h"
 #include "Kismet/GameplayStatics.h"
 
 UDialogAction::UDialogAction() {
@@ -11,9 +12,10 @@ void UDialogAction::BeginPlay() {
 	Super::BeginPlay();
 
 	int index = FMath::RandRange(0,sounds.Num());
-	UGameplayStatics::PlaySound2D(GetWorld(), sounds[index], 1.f, 1.f, 0.f);
+	UGameplayStatics::PlaySound2D(GetWorld(), sounds[index], 1.f, 1.f, -0.5f);
 
-
+	//AArcherTower::OnDialogSpawned(dialogs[index]);
+	dialogController->OnDialogSpawned(dialogs[index]);
 }
 
 
@@ -21,4 +23,5 @@ void UDialogAction::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 }
+
 
