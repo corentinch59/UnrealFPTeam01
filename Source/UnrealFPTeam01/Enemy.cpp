@@ -38,6 +38,7 @@ void AEnemy::Tick(float DeltaTime) {
 
 	if (aiController && aiController->GetBlackboardComponent()->GetValueAsBool(FName("DetectTowers")) && !isAttacking ) {
 		Attack(Cast<ATowerBase>(aiController->GetBlackboardComponent()->GetValueAsObject(FName("DetectedTowers"))));
+		GLog->Log("begin attack");
 	}
 
 }
@@ -52,8 +53,6 @@ void AEnemy::Attack(ATowerBase* tower) {
 
 void AEnemy::Reload() {
 	reloadTimer += 0.1f;
-
-	GLog->Log(FString::FromInt(reloadTimer));
 
 	if (reloadTimer > reloadTime) {
 		GetWorld()->GetTimerManager().ClearTimer(timerHandle);

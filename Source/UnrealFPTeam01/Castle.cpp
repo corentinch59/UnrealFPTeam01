@@ -24,7 +24,9 @@ void ACastle::ApplyDamage(float damage) {
 	GLog->Log("Apply damage");
 
 	if (health <= 0) {
-		Destroy();
+		//Destroy();
+		OnCastleDestroyed();
+		GLog->Log("destroyed");
 		// Anim de fin de jeu
 	}
 }

@@ -56,20 +56,23 @@ public:
 
     UFUNCTION()
     void TakeDamage(float damage);
-    
+
+
+    UPROPERTY()
+    AAIController* aiController;
 protected:
 	virtual void BeginPlay() override;
 
     virtual void Tick(float DeltaTime) override;
 
+
     UPROPERTY()
     FTimerHandle timerHandle;
 
 
+
 private:
 
-    UPROPERTY()
-    AAIController* aiController;
 
     UPROPERTY()
     float reloadTimer;

@@ -77,6 +77,7 @@ void AWaveController::SpawnEnemy() {
 			//enemyAI->Possess();
 
 			enemy->SetActorScale3D(enemy->enemyScale);
+			enemy->aiController = enemyAI;
 			
 			actualWave.spawnedEnnemies.Add(actualWave.ennemiesInWave[enemyToSpawnIndex]);
 			GLog->Log("spawned");
