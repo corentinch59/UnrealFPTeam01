@@ -53,23 +53,30 @@ void AWaveController::SpawnEnemy() {
 
 		if (enemyToSpawnIndex < actualWave.ennemiesInWave.Num()) {
 
-			int splineIndex = FMath::RandRange(0, splines.Num());
+			int splineIndex = FMath::RandRange(0, splines.Num() - 1);
 
-			if (!splines[splineIndex]->IsA(USplineComponent::StaticClass())) {
+			if (!splines[splineIndex] && !splines[splineIndex]->GetComponentByClass(USplineComponent::StaticClass())) {
 				GLog->Log("error with spline list");
 				return;
 			}
 
-			USplineComponent* targetSpline = Cast<USplineComponent>(splines[splineIndex]);
+			USplineComponent* targetSpline = Cast<USplineComponent>(splines[splineIndex]->GetComponentByClass(USplineComponent::StaticClass()));
+
+			if (!targetSpline)
+				return;
+
 			enemySpawn = targetSpline->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
 
 			AEnemy* enemy = Cast<AEnemy>(GetWorld()->SpawnActor<AEnemy>(actualWave.ennemiesInWave[enemyToSpawnIndex], enemySpawn, FRotator(0, 0, 0)));
-		//	enemyAI = GetWorld()->SpawnActor<AAIController>(enemyController, enemySpawn, FRotator(0, 0, 0));
-			
-		//	enemyAI->Possess(enemy);
-			//enemyAI->Possess();
 
 			enemy->targetSpline = targetSpline;
+
+			enemyAI = GetWorld()->SpawnActor<AAIController>(enemyController, enemySpawn, FRotator(0, 0, 0));
+			
+			enemyAI->Possess(enemy);
+			//enemyAI->Possess();
+
+			enemy->SetActorScale3D(enemy->enemyScale);
 			
 			actualWave.spawnedEnnemies.Add(actualWave.ennemiesInWave[enemyToSpawnIndex]);
 			GLog->Log("spawned");
@@ -78,9 +85,13 @@ void AWaveController::SpawnEnemy() {
 			SpawnWave();
 		}
 		else { // On passe à la vague suivante
+
+			if (waves.Num() <= 1)
+				return;
+
 			GLog->Log("next wave");
 			isWaitingWave = true;
-			OnWaitWaveEvent();
+			OnBeginWaitWave();
 			GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &AWaveController::WaitNextWave, 1.0f, true, 0.0f);
 		}
 
@@ -91,6 +102,7 @@ void AWaveController::WaitNextWave() {
 	timeBetweenWave--;
 
 	GLog->Log(FString::FromInt(timeBetweenWave));
+	OnTickWaitWave(timeBetweenWave);
 
 	if (timeBetweenWave <= 0) {
 		
@@ -99,6 +111,7 @@ void AWaveController::WaitNextWave() {
 		actualWaveId++;
 		isWaitingWave = false;
 		generateWave = true;
+		OnEndWaitWave();
 		SpawnWave();
 	}
 }

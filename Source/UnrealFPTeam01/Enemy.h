@@ -39,6 +39,9 @@ public:
     UPROPERTY(VisibleAnywhere)
     bool isAttacking;
 
+    UPROPERTY(EditAnywhere)
+    FVector enemyScale;
+
     UPROPERTY(VisibleAnywhere)
     ATowerBase* targetTower;
 

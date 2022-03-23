@@ -56,8 +56,15 @@ public:
 //	UPROPERTY(EditAnywhere)
 //	TSubclassOf<UUserWidget> waveWidget;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnWaitWaveEvent();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Waves")
+	void OnBeginWaitWave();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Waves")
+	void OnTickWaitWave(float timeRemaining);
+
+	UFUNCTION(BlueprintImplementableEvent,Category="Waves")
+	void OnEndWaitWave();
+
 
 protected:
 	virtual void BeginPlay() override;
