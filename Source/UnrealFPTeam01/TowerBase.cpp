@@ -76,7 +76,7 @@ bool ATowerBase::CheckHit()
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
 	actorsToIgnore.Add(EndPathActor);
-	actorsToIgnore.Add(EndPathActors[1]);
+	//actorsToIgnore.Add(EndPathActors[1]);
 
 	bool bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadius, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
 

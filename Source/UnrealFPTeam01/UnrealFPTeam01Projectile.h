@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "RangeEnemy.h"
 #include "UnrealFPTeam01Projectile.generated.h"
 
 class USphereComponent;
@@ -24,6 +25,9 @@ class AUnrealFPTeam01Projectile : public AActor
 
 public:
 	AUnrealFPTeam01Projectile();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	ARangeEnemy* targetEnemy;
 
 	/** called when projectile hits something */
 	UFUNCTION()
