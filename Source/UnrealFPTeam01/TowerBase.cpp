@@ -79,7 +79,12 @@ void ATowerBase::Tick(float DeltaTime)
 	{
 		if(PlayerController->GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, UnderMouseHit))
 		{
-			if(UnderMouseHit.Actor->IsA(APlateauInteractable::StaticClass()))
+			if(UnderMouseHit.Actor->ActorHasTag(TEXT("Road")))
+			{
+				this->SetActorLocation(UnderMouseHit.Location);
+				SetBluePlacement();
+			}
+			if(UnderMouseHit.Actor->ActorHasTag(TEXT("Side")))
 			{
 				this->SetActorLocation(UnderMouseHit.Location);
 				SetGreenPlacement();
