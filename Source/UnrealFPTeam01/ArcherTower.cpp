@@ -21,11 +21,6 @@ AArcherTower::AArcherTower()
 
 	//TowerProjectile = ATowerProjectile::StaticClass();
 
-	for (int i = 0; i < BaseComponent->GetNumMaterials(); ++i)
-	{
-		AdditionalMeshMaterials.Add(BaseComponent->GetMaterial(i));
-	}
-
 	AttackCooldown = 0.f;
 }
 
@@ -45,6 +40,25 @@ void AArcherTower::Tick(float DeltaSeconds)
 		}
 	}
 	AttackCooldown -= GetWorld()->DeltaTimeSeconds;
+
+
+
+}
+
+void AArcherTower::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (int i = 0; i < BaseComponent->GetNumMaterials(); i++)
+	{
+		AdditionalMeshMaterials.Add(BaseComponent->GetMaterial(i));
+	}
+
+	BaseComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
+
+	/*GLog->Log("Number of Additional materials : " + FString::FromInt(AdditionalMeshMaterials.Num()));
+	GLog->Log(AdditionalMeshMaterials[0]->GetName());*/
+
 }
 
 void AArcherTower::SpawnProjectile(AActor* target)
@@ -69,9 +83,40 @@ void AArcherTower::SetGreenPlacement()
 {
 	Super::SetGreenPlacement();
 
-	for (int i = 0; i < BaseComponent->GetNumMaterials(); ++i)
+	for (int i = 0; i < BaseComponent->GetNumMaterials(); i++)
 	{
-		
+		BaseComponent->SetMaterial(i, GreenMaterial);
+	}
+}
+
+void AArcherTower::SetBluePlacement()
+{
+	Super::SetBluePlacement();
+
+	for (int i = 0; i < BaseComponent->GetNumMaterials(); i++)
+	{
+		BaseComponent->SetMaterial(i, BlueMaterial);
+	}
+}
+
+void AArcherTower::SetMeshMaterials()
+{
+	Super::SetMeshMaterials();
+
+	for (int i = 0; i < AdditionalMeshMaterials.Num(); i++)
+	{
+		BaseComponent->SetMaterial(i, AdditionalMeshMaterials[i]);
+	}
+}
+
+void AArcherTower::InitializeTower()
+{
+	Super::InitializeTower();
+
+	if(!isActive)
+	{
+		BaseComponent->SetCollisionProfileName(TEXT("NoCollisionC"));
+		this->SetActorScale3D(FVector(.25f, .25f, .25f));
 	}
 }
 

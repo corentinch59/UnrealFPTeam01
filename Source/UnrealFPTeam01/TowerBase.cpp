@@ -5,6 +5,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "UnrealFPTeam01/UnrealFPTeam01Character.h"
+#include "UnrealFPTeam01/PlateauInteractable.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -22,23 +24,23 @@ ATowerBase::ATowerBase()
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
-	for (int i = 0; i < MeshComponent->GetNumMaterials(); ++i)
-	{
-		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
-	}
-
 	TowerHealth = 100;
 	TowerDamage = 1;
 	TowerRangeRadius = 250.f;
 	TowerAttackRate = 1.f;
 	TagOfEndPath = "EndPath";
 	isActive = true;
+	isInHand = false;
 }
 
 // Called when the game starts or when spawned
 void ATowerBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	MeshComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
 
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TagOfEndPath, EndPathActors);
 	if(EndPathActors.Num() > 1)
@@ -56,6 +58,16 @@ void ATowerBase::BeginPlay()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Couldn't find End Path ! %f"), GetWorld()->TimeSeconds));
 	}
+
+	for (int i = 0; i < MeshComponent->GetNumMaterials(); i++)
+	{
+		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+	}
+
+	/*GLog->Log("Number of Base Materials : " + FString::FromInt(BaseMeshMaterial.Num()));
+	GLog->Log(BaseMeshMaterial[0]->GetName());*/
+
+	PlayerRef = static_cast<AUnrealFPTeam01Character*>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -63,6 +75,24 @@ void ATowerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(!PlayerRef->isFP && !isActive && !isInHand)
+	{
+		if(PlayerController->GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, UnderMouseHit))
+		{
+			if(UnderMouseHit.Actor->IsA(APlateauInteractable::StaticClass()))
+			{
+				this->SetActorLocation(UnderMouseHit.Location);
+				SetGreenPlacement();
+			}
+		}
+	}
+}
+
+void ATowerBase::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	SetMeshMaterials();
+	isActive = true;
+	PlayerRef->ApplyConstruction();
 }
 
 bool ATowerBase::CheckHit()
@@ -95,14 +125,39 @@ void ATowerBase::DestroyTower()
 
 void ATowerBase::SetGreenPlacement()
 {
-	
+	for(int i = 0; i < BaseMeshMaterial.Num(); i++)
+	{
+		MeshComponent->SetMaterial(i, GreenMaterial);
+	}
+
+	isActive = false;
 }
+
+void ATowerBase::SetBluePlacement()
+{
+	for (int i = 0; i <BaseMeshMaterial.Num(); i++)
+	{
+		MeshComponent->SetMaterial(i, BlueMaterial);
+	}
+
+	isActive = false;
+}
+
+void ATowerBase::SetMeshMaterials()
+{
+	for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+	{
+		MeshComponent->SetMaterial(i, BaseMeshMaterial[i]);
+	}
+
+	isActive = true;
+}
+
 
 AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 {
 	AActor* Target = ActorsArray[0];
 	FVector closestTarget = Target->GetActorLocation();
-	FVector test = EndPathActor->GetActorLocation();
 	if (ActorsArray.Num() != 0)
 	{
 		for (int i = 0; i < ActorsArray.Num(); i++)
@@ -130,10 +185,13 @@ void ATowerBase::RotateTowardTarget(AActor* target)
 	this->SetActorRotation(newRotation);
 }
 
-// Called to bind functionality to input
-void ATowerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATowerBase::InitializeTower()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	isActive = false;
+	if(!isActive)
+	{
+		MeshComponent->SetCollisionProfileName(TEXT("NoCollisionC"));
+	}
 
 }
 

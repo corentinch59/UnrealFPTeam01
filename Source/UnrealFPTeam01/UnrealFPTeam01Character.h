@@ -4,10 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "UnrealFPTeam01/TowerBase.h"
 #include "UnrealFPTeam01/PlateauInteractable.h"
 #include "UnrealFPTeam01/TowerBox.h"
-#include "UnrealFPTeam01/ArcherTower.h"
 #include "UnrealFPTeam01Character.generated.h"
 
 class UInputComponent;
@@ -17,6 +15,16 @@ class UCameraComponent;
 class UMotionControllerComponent;
 class UAnimMontage;
 class USoundBase;
+class ATowerBase;
+class AArcherTower;
+
+UENUM()
+enum TowerType
+{
+	None			UMETA(DisplayName = "None"),
+	ArcherTower		UMETA(DisplayName = "Archer Tower"),
+	KnightTower		UMETA(DisplayName = "Knight Tower")
+};
 
 UCLASS(config=Game)
 class AUnrealFPTeam01Character : public ACharacter
@@ -32,13 +40,19 @@ class AUnrealFPTeam01Character : public ACharacter
 	UCameraComponent* FirstPersonCameraComponent;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	USceneComponent* TowerInHand;
+	ATowerBase* HeldTowerRef;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* ArcherTowerMesh;
+	ATowerBase* ConstructTowerRef;
 
-	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* KnightTowerMesh;
+	UPROPERTY()
+	APlayerController* PlayerController;
+
+	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
+	TSubclassOf<ATowerBase> ArcherTowerSpawn;
+
+	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
+	TSubclassOf<ATowerBase> KnightTowerSpawn;
 
 public:
 	AUnrealFPTeam01Character();
@@ -65,9 +79,6 @@ public:
 	UPROPERTY(EditAnywhere, Category=CameraView)
 	float blendTime = .5f;
 
-	UPROPERTY()
-	TEnumAsByte<BoxType> TowerHeldType;
-
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
 
@@ -77,17 +88,32 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InteractWObject();
 
+	UFUNCTION(BlueprintCallable)
+	void ClearHand();
+
+	UFUNCTION(BlueprintCallable)
+	void ClearConstruction();
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyConstruction();
+
 	UPROPERTY(BlueprintReadWrite, Category=CameraView)
 	bool isFP = true;
 
-	UPROPERTY(VisibleDefaultsOnly)
-	int TowerOnSide;
+	UPROPERTY(BlueprintReadWrite)
+	bool ConstructionMode = false;
 
-	UPROPERTY(VisibleDefaultsOnly)
-	int TowerOnRoad;
+	UPROPERTY(EditAnywhere, Category = PlayerStats)
+	int NbTowerOnSide;
 
-	UPROPERTY(VisibleDefaultsOnly)
-	int nbTowerMax;
+	UPROPERTY(EditAnywhere, Category = PlayerStats)
+	int NbTowerOnRoad;
+
+	UPROPERTY(EditAnywhere, Category = PlayerStats)
+	int NbTowerMax;
+
+	UPROPERTY(BlueprintReadWrite)
+	TEnumAsByte<TowerType> TowerType;
 
 protected:
 

@@ -20,7 +20,15 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void BeginPlay() override;
+
 	virtual void SetGreenPlacement() override;
+
+	virtual void SetBluePlacement() override;
+
+	virtual void SetMeshMaterials() override;
+
+	virtual void InitializeTower() override;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseComponent;
