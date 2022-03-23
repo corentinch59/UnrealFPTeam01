@@ -3,11 +3,33 @@
 
 #include "PlateauInteractable.h"
 
+
 // Sets default values
 APlateauInteractable::APlateauInteractable()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	MeshComponent->SetCollisionObjectType(ECC_GameTraceChannel2);
+	RootComponent = MeshComponent;
+
+	TabletopCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TableTop Camera"));
+	TabletopCamera->SetupAttachment(MeshComponent);
+	TabletopCamera->SetRelativeLocation(FVector(0.f, 0.f, 100.f));
+	TabletopCamera->SetRelativeRotation(FRotator(-90.f,180.f,180.f));
+
+}
+
+void APlateauInteractable::OnOverlapBegin(UPrimitiveComponent* HitComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+}
+
+void APlateauInteractable::OnOverlapEnd(UPrimitiveComponent* HitComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherIndex)
+{
 
 }
 
