@@ -12,7 +12,7 @@ AWaveController::AWaveController() {
 void AWaveController::BeginPlay() {
 	Super::BeginPlay();
 
-	if (splineActor && splineActor->GetComponentByClass(USplineComponent::StaticClass())) {
+	/*if (splineActor && splineActor->GetComponentByClass(USplineComponent::StaticClass())) {
 		USplineComponent* splineComp = Cast<USplineComponent>(splineActor->GetComponentByClass(USplineComponent::StaticClass()));
 
 		if (!splineComp) 
@@ -22,6 +22,7 @@ void AWaveController::BeginPlay() {
 		enemySpawn = splineComp->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
 		enemyEnd = splineComp->GetLocationAtSplinePoint(splineComp->GetNumberOfSplinePoints() - 1, ESplineCoordinateSpace::World);
 	}
+	*/
 
 	SpawnWave();
 	
@@ -51,11 +52,24 @@ void AWaveController::SpawnEnemy() {
 		int enemyToSpawnIndex = actualWave.spawnedEnnemies.Num();
 
 		if (enemyToSpawnIndex < actualWave.ennemiesInWave.Num()) {
+
+			int splineIndex = FMath::RandRange(0, splines.Num());
+
+			if (!splines[splineIndex]->IsA(USplineComponent::StaticClass())) {
+				GLog->Log("error with spline list");
+				return;
+			}
+
+			USplineComponent* targetSpline = Cast<USplineComponent>(splines[splineIndex]);
+			enemySpawn = targetSpline->GetLocationAtSplinePoint(0, ESplineCoordinateSpace::World);
+
 			AEnemy* enemy = Cast<AEnemy>(GetWorld()->SpawnActor<AEnemy>(actualWave.ennemiesInWave[enemyToSpawnIndex], enemySpawn, FRotator(0, 0, 0)));
 		//	enemyAI = GetWorld()->SpawnActor<AAIController>(enemyController, enemySpawn, FRotator(0, 0, 0));
 			
 		//	enemyAI->Possess(enemy);
 			//enemyAI->Possess();
+
+			enemy->targetSpline = targetSpline;
 			
 			actualWave.spawnedEnnemies.Add(actualWave.ennemiesInWave[enemyToSpawnIndex]);
 			GLog->Log("spawned");

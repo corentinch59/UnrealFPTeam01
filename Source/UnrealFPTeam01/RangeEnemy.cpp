@@ -20,11 +20,11 @@ void ARangeEnemy::Attack(ATowerBase* tower) {
 
 	ballSpawnPosition = (this->GetActorLocation() + offsetBallSpawn);
 
-	DrawDebugLine(GetWorld(), this->GetActorLocation(), ballSpawnPosition + this->GetActorForwardVector() * -1 * 100, FColor::Green, false, 15, 0, 1);
+	DrawDebugLine(GetWorld(), this->GetActorLocation(), ballSpawnPosition + this->GetActorForwardVector() * 150, FColor::Green, false, 15, 0, 1);
 
 	FActorSpawnParameters params;
 
-	AActor* ball = GetWorld()->SpawnActor<AUnrealFPTeam01Projectile>(ballClass, ballStart->GetActorLocation(), FRotator(0, 0, 0));
+	AActor* ball = GetWorld()->SpawnActor<AUnrealFPTeam01Projectile>(ballClass, this->GetActorLocation() + this->GetActorForwardVector() * 100, FRotator(0, 0, 0));
 
 	ball->SetActorScale3D(ballSize);
 
@@ -40,7 +40,7 @@ void ARangeEnemy::Attack(ATowerBase* tower) {
 	moveComp->MaxSpeed = ballSpeed;
 	moveComp->ProjectileGravityScale = 0.f;
 
-	moveComp->Velocity = FVector(0, -ballSpeed, 0);
+	moveComp->Velocity = this->GetActorForwardVector() * -ballSpeed;
 
 	Super::Attack(tower);
 }

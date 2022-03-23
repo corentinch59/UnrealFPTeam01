@@ -33,7 +33,7 @@ public:
 	bool isCannon;
 
 	UPROPERTY(EditAnywhere)
-	AActor* ballStart;
+	UActorComponent* ballStart;
 
 	void Attack(ATowerBase* base) override;
 

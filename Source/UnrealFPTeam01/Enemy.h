@@ -5,6 +5,7 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Components/SplineComponent.h"
 #include "Enemy.generated.h"
 
 UCLASS(Abstract)
@@ -40,6 +41,9 @@ public:
 
     UPROPERTY(VisibleAnywhere)
     ATowerBase* targetTower;
+
+    UPROPERTY(EditAnywhere,BlueprintReadWrite)
+    USplineComponent* targetSpline;
 
     UFUNCTION()
     virtual void Attack(ATowerBase* tower);
