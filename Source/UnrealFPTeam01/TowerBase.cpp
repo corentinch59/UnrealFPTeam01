@@ -30,6 +30,7 @@ ATowerBase::ATowerBase()
 	TowerAttackRate = 1.f;
 	TagOfEndPath = "EndPath";
 	isActive = true;
+	isInHand = false;
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +39,6 @@ void ATowerBase::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	PlayerController->bEnableClickEvents = true;
 
 	MeshComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
 
@@ -75,7 +75,7 @@ void ATowerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(!PlayerRef->isFP)
+	if(!PlayerRef->isFP && !isActive && !isInHand)
 	{
 		if(PlayerController->GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, UnderMouseHit))
 		{
@@ -92,6 +92,7 @@ void ATowerBase::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPre
 {
 	SetMeshMaterials();
 	isActive = true;
+	PlayerRef->ApplyConstruction();
 }
 
 bool ATowerBase::CheckHit()
@@ -157,7 +158,6 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 {
 	AActor* Target = ActorsArray[0];
 	FVector closestTarget = Target->GetActorLocation();
-	FVector test = EndPathActor->GetActorLocation();
 	if (ActorsArray.Num() != 0)
 	{
 		for (int i = 0; i < ActorsArray.Num(); i++)
@@ -183,5 +183,15 @@ void ATowerBase::RotateTowardTarget(AActor* target)
 	FRotator RotationToRotate = UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), target->GetActorLocation());
 	FRotator newRotation = { 0.f, RotationToRotate.Yaw, 0.f };
 	this->SetActorRotation(newRotation);
+}
+
+void ATowerBase::InitializeTower()
+{
+	isActive = false;
+	if(!isActive)
+	{
+		MeshComponent->SetCollisionProfileName(TEXT("NoCollisionC"));
+	}
+
 }
 

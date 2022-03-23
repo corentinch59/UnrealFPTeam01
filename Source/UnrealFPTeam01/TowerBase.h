@@ -38,9 +38,12 @@ protected:
 
 	UPROPERTY()
 	float AttackCooldown;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void InitializeTower();
 
 	UFUNCTION()
 	void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
@@ -92,6 +95,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool isActive;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool isInHand;
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();

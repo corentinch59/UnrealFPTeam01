@@ -109,3 +109,14 @@ void AArcherTower::SetMeshMaterials()
 	}
 }
 
+void AArcherTower::InitializeTower()
+{
+	Super::InitializeTower();
+
+	if(!isActive)
+	{
+		BaseComponent->SetCollisionProfileName(TEXT("NoCollisionC"));
+		this->SetActorScale3D(FVector(.25f, .25f, .25f));
+	}
+}
+

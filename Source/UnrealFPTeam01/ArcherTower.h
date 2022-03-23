@@ -28,22 +28,24 @@ public:
 
 	virtual void SetMeshMaterials() override;
 
-	UPROPERTY(VisibleAnywhere)
-		UStaticMeshComponent* BaseComponent;
-
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<ATowerProjectile> TowerProjectile;
+	virtual void InitializeTower() override;
 
 	UPROPERTY(VisibleAnywhere)
-		TArray<UMaterialInterface*> AdditionalMeshMaterials;
+	UStaticMeshComponent* BaseComponent;
 
 	UPROPERTY(EditAnywhere)
-		float ProjectileSpeed;
+	TSubclassOf<ATowerProjectile> TowerProjectile;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<UMaterialInterface*> AdditionalMeshMaterials;
+
+	UPROPERTY(EditAnywhere)
+	float ProjectileSpeed;
 
 	UFUNCTION(BlueprintCallable)
-		void SpawnProjectile(AActor* target);
+	void SpawnProjectile(AActor* target);
 
 	UFUNCTION(BlueprintCallable)
-		void BalistaRotation(AActor* target);
+	void BalistaRotation(AActor* target);
 
 };

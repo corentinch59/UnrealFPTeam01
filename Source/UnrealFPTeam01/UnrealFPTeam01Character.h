@@ -40,10 +40,19 @@ class AUnrealFPTeam01Character : public ACharacter
 	UCameraComponent* FirstPersonCameraComponent;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	USceneComponent* TowerInHand;
+	ATowerBase* HeldTowerRef;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	ATowerBase* TowerHeld;
+	ATowerBase* ConstructTowerRef;
+
+	UPROPERTY()
+	APlayerController* PlayerController;
+
+	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
+	TSubclassOf<ATowerBase> ArcherTowerSpawn;
+
+	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
+	TSubclassOf<ATowerBase> KnightTowerSpawn;
 
 public:
 	AUnrealFPTeam01Character();
@@ -79,8 +88,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InteractWObject();
 
+	UFUNCTION(BlueprintCallable)
+	void ClearHand();
+
+	UFUNCTION(BlueprintCallable)
+	void ClearConstruction();
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyConstruction();
+
 	UPROPERTY(BlueprintReadWrite, Category=CameraView)
 	bool isFP = true;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool ConstructionMode = false;
 
 	UPROPERTY(EditAnywhere, Category = PlayerStats)
 	int NbTowerOnSide;
