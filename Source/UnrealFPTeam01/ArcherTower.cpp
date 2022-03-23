@@ -30,8 +30,9 @@ void AArcherTower::Tick(float DeltaSeconds)
 
 	if(CheckHit() && isActive)
 	{
+
 		AActor* Target = FindTarget(ActorsHit);
-		//GLog->Log(Target->GetName());
+		//GLog->Log("enter condition");
 		BalistaRotation(Target);
 		if(AttackCooldown <= 0.f)
 		{
@@ -67,7 +68,7 @@ void AArcherTower::SpawnProjectile(AActor* target)
 
 	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActorDeferred<ATowerProjectile>(TowerProjectile, SpawnLocation);
 
-	TTowerProjectile->InitializeProjectile(target);
+	TTowerProjectile->InitializeProjectile(target,this);
 	TTowerProjectile->FinishSpawning(SpawnLocation);
 
 }

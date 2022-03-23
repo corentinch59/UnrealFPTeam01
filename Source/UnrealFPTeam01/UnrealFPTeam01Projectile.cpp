@@ -3,6 +3,8 @@
 #include "UnrealFPTeam01Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "TowerBase.h"
+#include "Castle.h"
 
 AUnrealFPTeam01Projectile::AUnrealFPTeam01Projectile() 
 {
@@ -39,5 +41,19 @@ void AUnrealFPTeam01Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* Othe
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 
 		Destroy();
+	}
+
+
+	if (OtherActor->IsA(ACastle::StaticClass())) {
+		Destroy();
+		ACastle* castle = Cast<ACastle>(OtherActor);
+		castle->ApplyDamage(targetEnemy->attackDamage);
+	}
+
+	if (OtherActor->IsA(ATowerBase::StaticClass())) {
+		GLog->Log("hit tower");
+		Destroy();
+		ATowerBase* tower = Cast<ATowerBase>(OtherActor);
+		tower->TowerTakeDamage(targetEnemy->attackDamage);
 	}
 }

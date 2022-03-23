@@ -5,6 +5,7 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Components/SplineComponent.h"
 #include "Enemy.generated.h"
 
 UCLASS(Abstract)
@@ -17,11 +18,17 @@ public:
     UPROPERTY(EditAnywhere)
     float health;
 
+    UPROPERTY(EditAnywhere)
+    float maxHealth;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float movementSpeed;
 
     UPROPERTY(EditAnywhere)
     float attackSpeed;
+
+    UPROPERTY(EditAnywhere,BlueprintReadWrite)
+    float attackDamage;
 
     UPROPERTY(EditAnywhere)
     float reloadTime;
@@ -35,11 +42,17 @@ public:
     UPROPERTY(VisibleAnywhere)
     ATowerBase* targetTower;
 
+    UPROPERTY(EditAnywhere,BlueprintReadWrite)
+    USplineComponent* targetSpline;
+
     UFUNCTION()
     virtual void Attack(ATowerBase* tower);
 
     UFUNCTION()
     virtual void Reload();
+
+    UFUNCTION()
+    void TakeDamage(float damage);
     
 protected:
 	virtual void BeginPlay() override;

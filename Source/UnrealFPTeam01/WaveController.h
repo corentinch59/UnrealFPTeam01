@@ -39,7 +39,7 @@ public:
 	float timeBetweenWave;
 
 	UPROPERTY(EditAnywhere)
-	AActor* splineActor;
+	TArray<AActor*> splines;
 
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* enemyTree;
