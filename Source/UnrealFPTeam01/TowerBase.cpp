@@ -20,14 +20,14 @@ ATowerBase::ATowerBase()
 
 	RootComponent = MeshComponent;
 
-	ProjectileOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin"));
-	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
+	ProjectileOrigin1 = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin1"));
+	ProjectileOrigin1->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	ProjectileOrigin1->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
-	TowerHealth = 100;
-	TowerDamage = 1;
-	TowerRangeRadius = 250.f;
-	TowerAttackRate = 1.f;
+	TowerHealthOnRoad = 100;
+	TowerDamageOnRoad = 1;
+	TowerRangeRadiusOnRoad = 250.f;
+	TowerAttackRateOnRoad = 1.f;
 	TagOfEndPath = "EndPath";
 	isActive = true;
 	isInHand = false;
@@ -111,16 +111,33 @@ bool ATowerBase::CheckHit()
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
 
-	bool bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadius, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+	bool bHasHit;
+	switch (TowerState)
+	{
+	case OnSide:
+		bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadiusOnSide, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+		break;
+	default:
+		bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadiusOnSide, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+		break;
+	}
 
-	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadius, 40, FColor(255, 0, 0));
+	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadiusOnRoad, 40, FColor(255, 0, 0));
 
 	return bHasHit;
 }
 
 void ATowerBase::TowerTakeDamage(int damage)
 {
-	TowerHealth -= damage;
+	switch (TowerState)
+	{
+	case OnSide:
+		TowerHealthOnSide -= damage;
+		break;
+	default:
+		TowerHealthOnRoad -= damage;
+		break;
+	}
 }
 
 void ATowerBase::DestroyTower()
@@ -136,6 +153,7 @@ void ATowerBase::SetGreenPlacement()
 	}
 
 	isActive = false;
+	TowerState = OnSide;
 }
 
 void ATowerBase::SetBluePlacement()
@@ -146,6 +164,7 @@ void ATowerBase::SetBluePlacement()
 	}
 
 	isActive = false;
+	TowerState = OnRoad;
 }
 
 void ATowerBase::SetMeshMaterials()
@@ -159,7 +178,7 @@ void ATowerBase::SetMeshMaterials()
 }
 
 
-AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
+AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray, TArray<AActor*>& TargetsToIgnore)
 {
 	AActor* Target = ActorsArray[0];
 	FVector closestTarget = Target->GetActorLocation();
@@ -172,14 +191,28 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 
 			if (Distance1.Size() <= Distance2.Size())
 			{
-				Target = ActorsArray[i];
-				closestTarget = Target->GetActorLocation();
+				if (TargetsToIgnore.Num() > 0 && ActorsHit.Num() < 0)
+				{
+					for(int j = 0; j < TargetsToIgnore.Num(); j++)
+					{
+						if(ActorsArray[i] != TargetsToIgnore[j])
+						{
+							Target = ActorsArray[i];
+							closestTarget = Target->GetActorLocation();
+						}
+					}
+				} else
+				{
+					Target = ActorsArray[i];
+					closestTarget = Target->GetActorLocation();
+				}
 			}
 		}
 	} else
 	{
 		GLog->Log(FString::FromInt(ActorsArray.Num()));
 	}
+	TargetsToIgnore.Add(Target);
 	return Target;
 }
 

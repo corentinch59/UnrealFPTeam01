@@ -39,10 +39,16 @@ public:
 	float lifeTime;
 
 	UPROPERTY(EditAnywhere)
+	float SpawnTime;
+
+	UPROPERTY(EditAnywhere)
 	float ProjectileSpeed;
 
+	UPROPERTY(EditAnywhere)
+	float AngleOffset;
+
 	UFUNCTION()
-	void InitializeProjectile(AActor* targetToSet);
+	void InitializeProjectile(AActor* targetToSet, float time = 0.f, float offset = 0.f);
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
