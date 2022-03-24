@@ -51,6 +51,11 @@ void ATowerProjectile::Tick(float DeltaTime)
 		FVector targetDir = (Target->GetActorLocation() - GetActorLocation());
 		float angle = FMath::Atan2(targetDir.GetSafeNormal().Y, targetDir.GetSafeNormal().X);
 
+		FVector NewDir = { FMath::Cos(angle + AngleOffset + 3.14f / 4.f ), FMath::Sin(angle + AngleOffset + 3.14f / 4.f), 0.f };
+
+		ProjectileMovement->Velocity += NewDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
+		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+
 		// TODO : Calculate the new direction with an offset in radiants and try to add it to the velocity
 	}
 	else
