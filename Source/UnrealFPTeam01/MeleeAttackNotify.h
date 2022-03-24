@@ -14,5 +14,11 @@ class UNREALFPTEAM01_API UMeleeAttackNotify : public UAnimNotify {
 	GENERATED_BODY()
 	
 public:
+
+	UMeleeAttackNotify();
+
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+
+	UPROPERTY()
+	bool cancelAttack;
 };

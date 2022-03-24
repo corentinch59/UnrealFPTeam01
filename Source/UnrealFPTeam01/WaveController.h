@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DialogController.h"
 #include "WaveConfig.h"
 #include "Components/SplineComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
@@ -35,6 +36,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float timeBetweenSpawn;
 
+	UPROPERTY(EditAnywhere)
+	float timeBeforeWave;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float timeBetweenWave;
 
@@ -55,6 +59,9 @@ public:
 
 //	UPROPERTY(EditAnywhere)
 //	TSubclassOf<UUserWidget> waveWidget;
+	
+	UFUNCTION()
+	void RefreshKilledEnnemies();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Waves")
 	void OnBeginWaitWave();
@@ -64,6 +71,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent,Category="Waves")
 	void OnEndWaitWave();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Waves")
+	void OnKilledBoss();
 
 
 protected:
@@ -93,4 +103,10 @@ private:
 
 	UPROPERTY()
 	float initTimeBetweenWave;
+
+	UPROPERTY()
+	ADialogController* dialogController;
+
+	UPROPERTY()
+	int killedEnnemies;
 };

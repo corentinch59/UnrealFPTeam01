@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
+#include "WaveController.h"
 #include "MeleeBoss.generated.h"
 
 UCLASS()
@@ -13,16 +14,19 @@ public:
 	AMeleeBoss();
 
 	void Attack(ATowerBase* base) override;
+
+	void TakeDamage(float damage) override;
 	
 	UPROPERTY(EditAnywhere)
 	float initialDamage;
-
-	UPROPERTY(EditAnywhere)
-	float damage;
 
 	UPROPERTY(EditAnywhere)
 	bool isDuck;
 	
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* animMontage;
+
+	UPROPERTY(EditAnywhere)
+	AWaveController* waveController;
+
 };

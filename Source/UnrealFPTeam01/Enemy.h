@@ -36,7 +36,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float sightRange;
 
-    UPROPERTY(VisibleAnywhere)
+    UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
     bool isAttacking;
 
     UPROPERTY(EditAnywhere)
@@ -55,7 +55,7 @@ public:
     virtual void Reload();
 
     UFUNCTION()
-    void TakeDamage(float damage);
+    virtual void TakeDamage(float damage);
 
 
     UPROPERTY()

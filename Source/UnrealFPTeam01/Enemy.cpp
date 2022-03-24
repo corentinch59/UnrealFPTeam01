@@ -6,11 +6,13 @@
 #include "Perception/AISenseConfig.h"	
 #include "Containers/Array.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "RangeEnemy.h"
 #include "TowerBase.h"
 #include "DrawDebugHelpers.h"
 #include "Math/UnrealMathUtility.h"
+#include "WaveController.h"
 
 AEnemy::AEnemy() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -65,8 +67,18 @@ void AEnemy::TakeDamage(float damage) {
 	health -= damage;
 	health = FMath::Clamp(health,0.f,maxHealth);
 
-	if (health == 0)
-		Destroy();
+	if (health == 0) {
+		AWaveController* waveController = Cast<AWaveController>(UGameplayStatics::GetActorOfClass(GetWorld(), AWaveController::StaticClass()));
+
+		if (!waveController)
+			return;
+
+		waveController->RefreshKilledEnnemies();
+
+		if (!IsPendingKill()) {
+			Destroy();
+		}
+	}
 }
 
 

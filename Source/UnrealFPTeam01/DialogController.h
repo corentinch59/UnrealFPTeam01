@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Sound/SoundBase.h"
 #include "GameFramework/Actor.h"
 #include "DialogController.generated.h"
 
@@ -12,7 +13,7 @@ public:
 	ADialogController();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Dialog")
-	void OnDialogSpawned(FName dialogName);
+	void OnDialogSpawned(FName dialogName,USoundBase* sound);
 
 protected:
 	virtual void BeginPlay() override;

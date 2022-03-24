@@ -1,25 +1,26 @@
 #include "DialogAction.h"
 #include "ArcherTower.h"
+#include "DialogController.h"
 #include "Kismet/GameplayStatics.h"
 
 UDialogAction::UDialogAction() {
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 
 void UDialogAction::BeginPlay() {
 	Super::BeginPlay();
 
-	int index = FMath::RandRange(0,sounds.Num());
+	if (dialogType != DialogType::SPAWN)
+		return;
+
+	dialogController = Cast<ADialogController>(UGameplayStatics::GetActorOfClass(GetWorld(), ADialogController::StaticClass()));
+	int index = FMath::RandRange(0,sounds.Num() - 1);
 
 	if (!GetWorld() || !sounds[index])
 		return;
 
-	UGameplayStatics::PlaySound2D(GetWorld(), sounds[index], 1.f, 1.f, 0.f);
-
-	//AArcherTower::OnDialogSpawned(dialogs[index]);
-	dialogController->OnDialogSpawned(dialogs[index]);
+	dialogController->OnDialogSpawned(dialogs[index],sounds[index]);
 }
 
 
