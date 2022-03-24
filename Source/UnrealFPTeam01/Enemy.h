@@ -36,8 +36,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float sightRange;
 
-    UPROPERTY(VisibleAnywhere)
+    UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
     bool isAttacking;
+
+    UPROPERTY(EditAnywhere)
+    FVector enemyScale;
 
     UPROPERTY(VisibleAnywhere)
     ATowerBase* targetTower;
@@ -52,21 +55,24 @@ public:
     virtual void Reload();
 
     UFUNCTION()
-    void TakeDamage(float damage);
-    
+    virtual void TakeDamage(float damage);
+
+
+    UPROPERTY()
+    AAIController* aiController;
 protected:
 	virtual void BeginPlay() override;
 
     virtual void Tick(float DeltaTime) override;
 
+
     UPROPERTY()
     FTimerHandle timerHandle;
 
 
+
 private:
 
-    UPROPERTY()
-    AAIController* aiController;
 
     UPROPERTY()
     float reloadTimer;

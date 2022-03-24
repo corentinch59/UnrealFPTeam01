@@ -15,4 +15,6 @@ public:
 	void Attack(ATowerBase* base) override;
 
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* animMontage;
 };

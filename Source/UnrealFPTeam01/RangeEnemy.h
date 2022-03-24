@@ -18,7 +18,7 @@ public:
 	TSubclassOf<class AUnrealFPTeam01Projectile> ballClass;
 
 	UPROPERTY(EditAnywhere)
-	FVector offsetBallSpawn;
+	float ballSpawnRange;
 
 	UPROPERTY(EditAnywhere)
 	FVector ballSize;

@@ -15,22 +15,20 @@ void ARangeEnemy::Tick(float deltaTime) {
 }
 
 void ARangeEnemy::Attack(ATowerBase* tower) {
-	targetTower = tower;
-	isAttacking = true;
 
-	ballSpawnPosition = (this->GetActorLocation() + offsetBallSpawn);
-
-	DrawDebugLine(GetWorld(), this->GetActorLocation(), ballSpawnPosition + this->GetActorForwardVector() * 150, FColor::Green, false, 15, 0, 1);
+	DrawDebugLine(GetWorld(), this->GetActorLocation(), this->GetActorLocation() + this->GetActorForwardVector() * 150, FColor::Green, false, 15, 0, 1);
 
 	FActorSpawnParameters params;
 
-	AActor* ball = GetWorld()->SpawnActor<AUnrealFPTeam01Projectile>(ballClass, this->GetActorLocation() + this->GetActorForwardVector() * 100, FRotator(0, 0, 0));
+	AActor* ball = GetWorld()->SpawnActor<AUnrealFPTeam01Projectile>(ballClass, this->GetActorLocation() + this->GetActorForwardVector() * ballSpawnRange, FRotator(0, 0, 0));
 
 	ball->SetActorScale3D(ballSize);
 
 	AUnrealFPTeam01Projectile* projectile = Cast<AUnrealFPTeam01Projectile>(ball);
 
 	projectile->targetEnemy = this;
+
+	GLog->Log("attack");
 
 	UStaticMeshComponent* mesh = Cast<UStaticMeshComponent>(ball->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 	UProjectileMovementComponent* moveComp = Cast<UProjectileMovementComponent>(ball->GetComponentByClass(UProjectileMovementComponent::StaticClass()));
@@ -40,7 +38,9 @@ void ARangeEnemy::Attack(ATowerBase* tower) {
 	moveComp->MaxSpeed = ballSpeed;
 	moveComp->ProjectileGravityScale = 0.f;
 
-	moveComp->Velocity = this->GetActorForwardVector() * -ballSpeed;
+
+
+	moveComp->Velocity = this->GetActorForwardVector() * ballSpeed;
 
 	Super::Attack(tower);
 }

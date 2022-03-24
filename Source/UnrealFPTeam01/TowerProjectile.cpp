@@ -68,6 +68,8 @@ void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 	GLog->Log("attack");
 	enemy->TakeDamage(parentTower->TowerDamage);
 	
-	Destroy();
+	if (!IsPendingKill()) {
+		Destroy();
+	}
 }
 

@@ -15,6 +15,12 @@ enum ActionType {
 	BOTH
 };
 
+UENUM()
+enum DialogType {
+	SPAWN,
+	TICK
+};
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UNREALFPTEAM01_API UDialogAction : public UActorComponent {
@@ -24,7 +30,10 @@ public:
 	UDialogAction();
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<ActionType> type;
+	TEnumAsByte<ActionType> actionType;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<DialogType> dialogType;
 
 	UPROPERTY(EditAnywhere)
 	TArray<USoundBase*> sounds;
@@ -32,7 +41,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TArray <FName> dialogs;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	ADialogController* dialogController;
 
 	/*UFUNCTION(BlueprintImplementableEvent,Category="Dialog")

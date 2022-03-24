@@ -1,21 +1,30 @@
 #include "MeleeBoss.h"
 
 AMeleeBoss::AMeleeBoss() {
-	damage = initialDamage;
+	attackDamage = initialDamage;
 }
 
-void AMeleeBoss::Attack(ATowerBase* tower) {	
+void AMeleeBoss::Attack(ATowerBase* tower) {
+
 	if (isDuck) {
-		damage *= 2;
+		attackDamage *= 2;
 
 		if (tower != targetTower)
-			damage = initialDamage;
+			attackDamage = initialDamage;
 	}
 
-	// Play montage
-	this->PlayAnimMontage(animMontage,1,NAME_None);
-	AEnemy::Attack(tower);
+	this->PlayAnimMontage(animMontage, 1, NAME_None);
+	
+	Super::Attack(tower);
 }
 
+
+void AMeleeBoss::TakeDamage(float damage) {
+	Super::TakeDamage(damage);
+
+	if (health <= 0) 
+		waveController->OnKilledBoss();
+	
+}
 
 

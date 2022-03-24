@@ -26,6 +26,9 @@ public:
 	UFUNCTION()
 	void ApplyDamage(float damage);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCastleDestroyed();
+
 protected:
 	virtual void BeginPlay() override;
 
