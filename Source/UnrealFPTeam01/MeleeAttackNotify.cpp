@@ -10,6 +10,9 @@ UMeleeAttackNotify::UMeleeAttackNotify() {
 }
 
 void UMeleeAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) {
+
+	GLog->Log("notify");
+
 	if (MeshComp->GetAttachmentRootActor()->IsA(AEnemy::StaticClass())) {
 		if (cancelAttack) {
 			cancelAttack = false;
