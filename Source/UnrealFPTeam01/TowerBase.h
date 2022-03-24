@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "UnrealFPTeam01/TowerProjectile.h"
+#include "UnrealFPTeam01/Enemy.h"
+#include "Blueprint/UserWidget.h"
 #include "TowerBase.generated.h"
 
 class AUnrealFPTeam01Character;
@@ -50,6 +52,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerHealthOnRoad;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	int MaxTowerHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerDamageOnRoad;
