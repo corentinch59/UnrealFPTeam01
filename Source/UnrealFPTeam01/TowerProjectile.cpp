@@ -2,7 +2,6 @@
 
 
 #include "TowerProjectile.h"
-#include "Enemy.h"
 
 // Sets default values
 ATowerProjectile::ATowerProjectile()
@@ -14,13 +13,15 @@ ATowerProjectile::ATowerProjectile()
 	MeshComponent->SetEnableGravity(false);
 	RootComponent = MeshComponent;
 
-
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 	ProjectileMovement->InitialSpeed = ProjectileSpeed;
 	ProjectileMovement->bIsHomingProjectile = false;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->HomingAccelerationMagnitude = 0.f;
+
+	SpawnTime = 0.f;
+	AngleOffset = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -45,22 +46,38 @@ void ATowerProjectile::Tick(float DeltaTime)
 	}
 	lifeTime -= GetWorld()->DeltaTimeSeconds;
 
-	FVector WantedDir = (Target->GetActorLocation() - GetActorLocation());
-	WantedDir += Target->GetVelocity() * WantedDir.Size() / ProjectileSpeed;
-	ProjectileMovement->Velocity += WantedDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
-	ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+	if(SpawnTime >= 0.f)
+	{
+		FVector targetDir = (Target->GetActorLocation() - GetActorLocation());
+		float angle = FMath::Atan2(targetDir.GetSafeNormal().Y, targetDir.GetSafeNormal().X);
+
+		// TODO : Calculate the new direction with an offset in radiants and try to add it to the velocity
+	}
+	else
+	{
+		FVector WantedDir = (Target->GetActorLocation() - GetActorLocation());
+		WantedDir += Target->GetVelocity() * WantedDir.Size() / ProjectileSpeed;
+		ProjectileMovement->Velocity += WantedDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
+		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+	}
+	SpawnTime -= GetWorld()->DeltaTimeSeconds;
 }
 
-void ATowerProjectile::InitializeProjectile(AActor* targetToSet,ATowerBase* parent)
+void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float time, float offset)
 {
 	Target = targetToSet;
-	parentTower = parent;
+	SpawnTime = time;
+	AngleOffset = offset;
 }
 
 void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                              FVector NormalImpulse, const FHitResult& Hit)
-{ // Tower Projectile touche un ennemi 
-	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+{
+	APawn* Pawn = Cast<APawn>(OtherActor);
+	if(Pawn ==  nullptr)
+	{
+		return;
+	}
 
 	if(!enemy || !parentTower)
 		return;

@@ -31,7 +31,7 @@ public:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	USceneComponent* ProjectileOrigin;
+	USceneComponent* ProjectileOrigin1;
 
 
 protected:
@@ -51,22 +51,37 @@ public:
 	void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	int TowerHealth;
+	int TowerHealthOnRoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
 	int MaxTowerHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	int TowerDamage;
+	int TowerDamageOnRoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	float TowerRangeRadius;
+	float TowerRangeRadiusOnRoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	float TowerAttackRate;
+	float TowerAttackRateOnRoad;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	int TowerHealthOnSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	int TowerDamageOnSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	float TowerRangeRadiusOnSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	float TowerAttackRateOnSide;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> ActorsHit;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> IgnoreTargets;
 
 	UPROPERTY()
 	FHitResult UnderMouseHit;
@@ -123,7 +138,7 @@ public:
 	virtual void SetMeshMaterials();
 
 	UFUNCTION(BlueprintCallable)
-	AActor* FindTarget(TArray<AActor*>& ActorsArray);
+	AActor* FindTarget(TArray<AActor*>& ActorsArray, TArray<AActor*>& TargetsToIgnore);
 
 	UFUNCTION(BlueprintCallable)
 	void RotateTowardTarget(AActor* target);

@@ -17,7 +17,7 @@ AArcherTower::AArcherTower()
 	MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	MeshComponent->SetRelativeLocation(FVector(0, 0, 100.f));
 
-	ProjectileOrigin->SetRelativeLocation(FVector(26.f, 0.f, 47.f));
+	ProjectileOrigin1->SetRelativeLocation(FVector(26.f, 0.f, 47.f));
 
 	//TowerProjectile = ATowerProjectile::StaticClass();
 
@@ -30,15 +30,22 @@ void AArcherTower::Tick(float DeltaSeconds)
 
 	if(CheckHit() && isActive)
 	{
-
-		AActor* Target = FindTarget(ActorsHit);
-		//GLog->Log("enter condition");
+		AActor* Target = FindTarget(ActorsHit, IgnoreTargets);
+		//GLog->Log(Target->GetName());
 		BalistaRotation(Target);
 		if(AttackCooldown <= 0.f)
 		{
-			SpawnProjectile(Target);
-			AttackCooldown = 1 / TowerAttackRate;
+			if(TowerState == OnSide)
+			{
+				
+			}
+			else
+			{
+				SpawnProjectile(Target);
+				AttackCooldown = 1 / TowerAttackRateOnRoad;
+			}
 		}
+		
 	}
 	AttackCooldown -= GetWorld()->DeltaTimeSeconds;
 
@@ -64,11 +71,11 @@ void AArcherTower::BeginPlay()
 
 void AArcherTower::SpawnProjectile(AActor* target)
 {
-	FTransform SpawnLocation = {MeshComponent->GetRelativeRotation(), ProjectileOrigin->GetComponentLocation(), FVector(1.f,1.f,1.f) };
+	FTransform SpawnLocation = {MeshComponent->GetRelativeRotation(), ProjectileOrigin1->GetComponentLocation(), FVector(1.f,1.f,1.f) };
 
 	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActorDeferred<ATowerProjectile>(TowerProjectile, SpawnLocation);
 
-	TTowerProjectile->InitializeProjectile(target,this);
+	TTowerProjectile->InitializeProjectile(target);
 	TTowerProjectile->FinishSpawning(SpawnLocation);
 
 }
