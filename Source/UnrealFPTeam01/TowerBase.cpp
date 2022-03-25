@@ -28,6 +28,12 @@ ATowerBase::ATowerBase()
 	TowerDamageOnRoad = 1;
 	TowerRangeRadiusOnRoad = 250.f;
 	TowerAttackRateOnRoad = 1.f;
+
+	TowerHealthOnSide = 100;
+	TowerDamageOnSide = 1;
+	TowerRangeRadiusOnSide = 250.f;
+	TowerAttackRateOnSide = 1.f;
+
 	TagOfEndPath = "EndPath";
 	isActive = true;
 	isInHand = false;

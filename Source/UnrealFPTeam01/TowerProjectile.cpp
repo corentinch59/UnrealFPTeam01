@@ -56,7 +56,6 @@ void ATowerProjectile::Tick(float DeltaTime)
 		ProjectileMovement->Velocity += NewDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
 		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
 
-		// TODO : Calculate the new direction with an offset in radiants and try to add it to the velocity
 	}
 	else
 	{

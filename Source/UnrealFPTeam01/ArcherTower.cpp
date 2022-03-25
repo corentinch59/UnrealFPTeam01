@@ -30,6 +30,7 @@ void AArcherTower::Tick(float DeltaSeconds)
 
 	if(CheckHit() && isActive)
 	{
+		GLog->Log("Hit");
 		AActor* Target = FindTarget(ActorsHit, IgnoreTargets);
 		//GLog->Log(Target->GetName());
 		BalistaRotation(Target);
