@@ -42,7 +42,6 @@ void AArcherTower::Tick(float DeltaSeconds)
 				SpawnProjectile(Target);
 				SpawnProjectile(Target);
 				AttackCooldown = 1 / TowerAttackRateOnSide;
-
 			}
 			else
 			{
@@ -52,8 +51,10 @@ void AArcherTower::Tick(float DeltaSeconds)
 		}
 		
 	}
-
 	AttackCooldown -= GetWorld()->DeltaTimeSeconds;
+
+
+
 }
 
 void AArcherTower::BeginPlay()
@@ -72,13 +73,24 @@ void AArcherTower::BeginPlay()
 
 }
 
-void AArcherTower::SpawnProjectile(AActor* target, float timeUntil, float offset)
+void AArcherTower::SpawnProjectile(AActor* target, float time, float offset)
 {
-	FTransform SpawnLocation = {MeshComponent->GetRelativeRotation(), ProjectileOrigin1->GetComponentLocation(), FVector(1.f,1.f,1.f) };
+	if(!MeshComponent)
+	{
+		GLog->Log("MeshComponent null");
+		return;
+	}
+	if(!ProjectileOrigin1)
+	{
+		GLog->Log("Projectile null");
+		return;
+	}
+
+	FTransform SpawnLocation = { MeshComponent->GetRelativeRotation(), ProjectileOrigin1->GetComponentLocation(), FVector(1.f,1.f,1.f) };
 
 	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActorDeferred<ATowerProjectile>(TowerProjectile, SpawnLocation);
 
-	TTowerProjectile->InitializeProjectile(target, timeUntil, offset);
+	TTowerProjectile->InitializeProjectile(target, time, offset);
 	TTowerProjectile->FinishSpawning(SpawnLocation);
 
 }
