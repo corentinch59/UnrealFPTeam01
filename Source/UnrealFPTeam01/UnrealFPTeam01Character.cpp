@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UnrealFPTeam01Character.h"
+
+#include <string>
+
 #include "UnrealFPTeam01Projectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -10,6 +13,7 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "UnrealFPTeam01/ArcherTower.h"
+#include "UnrealFPTeam01/BarbouTower.h"
 #include "UnrealFPTeam01/TowerBase.h"
 #include "MotionControllerComponent.h"
 
@@ -206,6 +210,18 @@ void AUnrealFPTeam01Character::InteractWObject()
 			{
 				break;
 			}
+		case 2:
+			{
+				FTransform SpawnLocation = { Mesh1P->GetRelativeRotation(), Mesh1P->GetComponentLocation(), FVector(1.f,1.f,1.f) };
+				ABarbouTower* NewTower = GetWorld()->SpawnActorDeferred<ABarbouTower>(BarbouTowerSpawn, SpawnLocation);
+				NewTower->BarbouBody->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("GripPoint"));
+				NewTower->isInHand = true;
+				NewTower->InitializeTower();
+				NewTower->FinishSpawning(SpawnLocation);
+				HeldTowerRef = NewTower;
+				TowerType = BarbouTower;
+				break;
+			}
 		default:
 			{
 				break;
@@ -280,6 +296,17 @@ void AUnrealFPTeam01Character::Tick(float DeltaSeconds)
 				GLog->Log("Spawned Actor on table");
 			}
 			break;
+		case 3:
+			{
+				FTransform SpawnLocation = { FRotator(0.f,0.f,0.f), Mesh1P->GetComponentLocation(), FVector(0.2f,0.2f,0.2f) };
+				ABarbouTower* BarbouTower = GetWorld()->SpawnActorDeferred<ABarbouTower>(BarbouTowerSpawn, SpawnLocation);
+				BarbouTower->SetActorRelativeScale3D(FVector(0.2f, 0.2f, 0.2f));
+				BarbouTower->InitializeTower();
+				BarbouTower->FinishSpawning(SpawnLocation);
+				ConstructTowerRef = BarbouTower;
+				ConstructionMode = false;
+				GLog->Log("Spawned Actor on table");
+			}
 		default:
 			break;
 		}

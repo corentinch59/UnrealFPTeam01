@@ -17,13 +17,15 @@ class UAnimMontage;
 class USoundBase;
 class ATowerBase;
 class AArcherTower;
+class ABarbouTower;
 
 UENUM()
 enum TowerType
 {
 	None			UMETA(DisplayName = "None"),
 	ArcherTower		UMETA(DisplayName = "Archer Tower"),
-	KnightTower		UMETA(DisplayName = "Knight Tower")
+	KnightTower		UMETA(DisplayName = "Knight Tower"),
+	BarbouTower		UMETA(DisplayName = "Barbou Tower")
 };
 
 UCLASS(config=Game)
@@ -53,6 +55,9 @@ class AUnrealFPTeam01Character : public ACharacter
 
 	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
 	TSubclassOf<ATowerBase> KnightTowerSpawn;
+
+	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
+	TSubclassOf<ABarbouTower> BarbouTowerSpawn;
 
 public:
 	AUnrealFPTeam01Character();

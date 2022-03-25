@@ -30,7 +30,6 @@ void AArcherTower::Tick(float DeltaSeconds)
 
 	if(CheckHit() && isActive)
 	{
-		//GLog->Log("Hit");
 		AActor* Target = FindTarget(ActorsHit, IgnoreTargets);
 		//GLog->Log(Target->GetName());
 		BalistaRotation(Target);
@@ -66,7 +65,7 @@ void AArcherTower::BeginPlay()
 		AdditionalMeshMaterials.Add(BaseComponent->GetMaterial(i));
 	}
 
-	BaseComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
+	BaseComponent->OnClicked.AddDynamic(this, &AArcherTower::OnClicked);
 
 	/*GLog->Log("Number of Additional materials : " + FString::FromInt(AdditionalMeshMaterials.Num()));
 	GLog->Log(AdditionalMeshMaterials[0]->GetName());*/
@@ -79,7 +78,7 @@ void AArcherTower::SpawnProjectile(AActor* target, float timeUntil, float offset
 
 	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActorDeferred<ATowerProjectile>(TowerProjectile, SpawnLocation);
 
-	TTowerProjectile->InitializeProjectile(target, this, timeUntil, offset);
+	TTowerProjectile->InitializeProjectile(target, timeUntil, offset);
 	TTowerProjectile->FinishSpawning(SpawnLocation);
 
 }
@@ -130,5 +129,11 @@ void AArcherTower::InitializeTower()
 		BaseComponent->SetCollisionProfileName(TEXT("NoCollisionC"));
 		this->SetActorScale3D(FVector(.25f, .25f, .25f));
 	}
+}
+
+void AArcherTower::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	Super::OnClicked(TouchedComponent, ButtonPressed);
+
 }
 
