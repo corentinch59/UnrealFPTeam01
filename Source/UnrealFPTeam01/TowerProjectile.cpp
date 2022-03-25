@@ -20,8 +20,8 @@ ATowerProjectile::ATowerProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->HomingAccelerationMagnitude = 0.f;
 
-	SpawnTime = 0.f;
 	AngleOffset = 0.f;
+	SpawnTime = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -70,8 +70,8 @@ void ATowerProjectile::Tick(float DeltaTime)
 void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float timeUntil, float offset)
 {
 	Target = targetToSet;
-	SpawnTime = timeUntil;
 	AngleOffset = offset;
+	SpawnTime = timeUntil;
 }
 
 void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
