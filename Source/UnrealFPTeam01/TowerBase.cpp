@@ -65,9 +65,12 @@ void ATowerBase::BeginPlay()
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Couldn't find End Path ! %f"), GetWorld()->TimeSeconds));
 	}
 
-	for (int i = 0; i < MeshComponent->GetNumMaterials(); i++)
+	if(MeshComponent->GetNumMaterials() > 0)
 	{
-		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+		for (int i = 0; i < MeshComponent->GetNumMaterials(); i++)
+		{
+			BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+		}
 	}
 
 	/*GLog->Log("Number of Base Materials : " + FString::FromInt(BaseMeshMaterial.Num()));
@@ -101,9 +104,14 @@ void ATowerBase::Tick(float DeltaTime)
 
 void ATowerBase::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
 {
-	SetMeshMaterials();
+	if (MeshComponent->GetNumMaterials() > 0)
+	{
+		SetMeshMaterials();
+	}
 	isActive = true;
 	PlayerRef->ApplyConstruction();
+
+	GLog->Log("Clicked");
 }
 
 bool ATowerBase::CheckHit()
@@ -153,9 +161,12 @@ void ATowerBase::DestroyTower()
 
 void ATowerBase::SetGreenPlacement()
 {
-	for(int i = 0; i < BaseMeshMaterial.Num(); i++)
+	if (MeshComponent->GetNumMaterials() > 0)
 	{
-		MeshComponent->SetMaterial(i, GreenMaterial);
+		for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+		{
+			MeshComponent->SetMaterial(i, GreenMaterial);
+		}
 	}
 
 	isActive = false;
@@ -164,9 +175,12 @@ void ATowerBase::SetGreenPlacement()
 
 void ATowerBase::SetBluePlacement()
 {
-	for (int i = 0; i <BaseMeshMaterial.Num(); i++)
+	if (MeshComponent->GetNumMaterials() > 0)
 	{
-		MeshComponent->SetMaterial(i, BlueMaterial);
+		for (int i = 0; i <BaseMeshMaterial.Num(); i++)
+		{
+			MeshComponent->SetMaterial(i, BlueMaterial);
+		}
 	}
 
 	isActive = false;
@@ -175,9 +189,12 @@ void ATowerBase::SetBluePlacement()
 
 void ATowerBase::SetMeshMaterials()
 {
-	for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+	if (MeshComponent->GetNumMaterials() > 0)
 	{
-		MeshComponent->SetMaterial(i, BaseMeshMaterial[i]);
+		for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+		{
+			MeshComponent->SetMaterial(i, BaseMeshMaterial[i]);
+		}
 	}
 
 	isActive = true;

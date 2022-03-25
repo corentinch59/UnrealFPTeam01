@@ -30,6 +30,8 @@ public:
 
 	virtual void InitializeTower() override;
 
+	virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed) override;
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseComponent;
 

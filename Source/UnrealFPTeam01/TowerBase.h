@@ -48,7 +48,7 @@ public:
 	virtual void InitializeTower();
 
 	UFUNCTION()
-	void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
+	virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
 	int TowerHealthOnRoad;
