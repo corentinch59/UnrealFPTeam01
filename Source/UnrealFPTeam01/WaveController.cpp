@@ -33,7 +33,7 @@ void AWaveController::SpawnWave() {
 			actualWave = waves[actualWaveId];
 			UDialogAction* currentDialogAction = Cast<UDialogAction>(this->GetComponentsByClass(UDialogAction::StaticClass())[actualWaveId]);
 
-			if (currentDialogAction)
+			if (currentDialogAction && dialogController)
 				dialogController->OnDialogSpawned(currentDialogAction->dialogs[0], currentDialogAction->sounds[0]);
 		}
 
