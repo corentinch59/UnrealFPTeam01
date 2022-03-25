@@ -31,7 +31,7 @@ public:
 	UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere)
-	USceneComponent* ProjectileOrigin1;
+	USceneComponent* ProjectileOrigin;
 
 
 protected:
