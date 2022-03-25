@@ -197,28 +197,15 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray, TArray<AActor*>& Ta
 
 			if (Distance1.Size() <= Distance2.Size())
 			{
-				if (TargetsToIgnore.Num() > 0 && ActorsHit.Num() < 0)
-				{
-					for(int j = 0; j < TargetsToIgnore.Num(); j++)
-					{
-						if(ActorsArray[i] != TargetsToIgnore[j])
-						{
-							Target = ActorsArray[i];
-							closestTarget = Target->GetActorLocation();
-						}
-					}
-				} else
-				{
-					Target = ActorsArray[i];
-					closestTarget = Target->GetActorLocation();
-				}
+				
+				Target = ActorsArray[i];
+				closestTarget = Target->GetActorLocation();
 			}
 		}
 	} else
 	{
 		GLog->Log(FString::FromInt(ActorsArray.Num()));
 	}
-	TargetsToIgnore.Add(Target);
 	return Target;
 }
 

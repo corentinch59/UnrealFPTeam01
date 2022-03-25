@@ -51,7 +51,7 @@ void ATowerProjectile::Tick(float DeltaTime)
 		FVector targetDir = (Target->GetActorLocation() - GetActorLocation());
 		float angle = FMath::Atan2(targetDir.GetSafeNormal().Y, targetDir.GetSafeNormal().X);
 
-		FVector NewDir = { FMath::Cos(angle + AngleOffset + 3.14f / 4.f ), FMath::Sin(angle + AngleOffset + 3.14f / 4.f), 0.f };
+		FVector NewDir = { FMath::Cos(angle + AngleOffset), FMath::Sin(angle + AngleOffset), 0.f };
 
 		ProjectileMovement->Velocity += NewDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
 		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
@@ -67,10 +67,10 @@ void ATowerProjectile::Tick(float DeltaTime)
 	SpawnTime -= GetWorld()->DeltaTimeSeconds;
 }
 
-void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float time, float offset)
+void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float timeUntil, float offset)
 {
 	Target = targetToSet;
-	SpawnTime = time;
+	SpawnTime = timeUntil;
 	AngleOffset = offset;
 }
 
