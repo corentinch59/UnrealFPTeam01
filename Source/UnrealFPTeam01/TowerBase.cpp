@@ -116,6 +116,7 @@ bool ATowerBase::CheckHit()
 
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
+	actorsToIgnore.Add(PlayerRef);
 
 	bool bHasHit;
 	switch (TowerState)

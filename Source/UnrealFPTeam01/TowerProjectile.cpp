@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "UnrealFPTeam01/TowerBase.h"
 #include "TowerProjectile.h"
 
 // Sets default values
@@ -67,9 +68,10 @@ void ATowerProjectile::Tick(float DeltaTime)
 	SpawnTime -= GetWorld()->DeltaTimeSeconds;
 }
 
-void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float timeUntil, float offset)
+void ATowerProjectile::InitializeProjectile(AActor* targetToSet, ATowerBase* ParentTowerSet, float timeUntil, float offset)
 {
 	Target = targetToSet;
+	parentTower = ParentTowerSet;
 	AngleOffset = offset;
 	SpawnTime = timeUntil;
 }
@@ -77,20 +79,21 @@ void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float timeUntil
 void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                              FVector NormalImpulse, const FHitResult& Hit)
 {
-	APawn* Pawn = Cast<APawn>(OtherActor);
-	if(Pawn ==  nullptr)
+	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+	if(enemy ==  nullptr)
 	{
+		GLog->Log("enemy null");
+		Destroy();
 		return;
 	}
 
 	if(!enemy || !parentTower)
 		return;
 	
-	GLog->Log("attack");
-	enemy->TakeDamage(parentTower->TowerDamage);
+	GLog->Log("hit enemy");
+
+	enemy->TakeDamage(parentTower->TowerState == OnSide ? parentTower->TowerDamageOnSide : parentTower->TowerDamageOnRoad);
 	
-	if (!IsPendingKill()) {
-		Destroy();
-	}
+	Destroy();
 }
 

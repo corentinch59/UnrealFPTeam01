@@ -7,6 +7,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "TowerProjectile.generated.h"
 
+class ATowerBase;
 
 UCLASS()
 class UNREALFPTEAM01_API ATowerProjectile : public AActor
@@ -47,8 +48,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	float AngleOffset;
 
+	UPROPERTY()
+	ATowerBase* parentTower;
+
 	UFUNCTION()
-	void InitializeProjectile(AActor* targetToSet, float timeUntil = 0.f, float offset = 0.f);
+	void InitializeProjectile(AActor* targetToSet, ATowerBase* ParentTowerSet, float timeUntil = 0.f, float offset = 0.f);
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
