@@ -78,7 +78,7 @@ void AArcherTower::SpawnProjectile(AActor* target, float timeUntil, float offset
 
 	ATowerProjectile* TTowerProjectile = GetWorld()->SpawnActorDeferred<ATowerProjectile>(TowerProjectile, SpawnLocation);
 
-	TTowerProjectile->InitializeProjectile(target, timeUntil, offset);
+	TTowerProjectile->InitializeProjectile(target,this, timeUntil, offset);
 	TTowerProjectile->FinishSpawning(SpawnLocation);
 
 }
