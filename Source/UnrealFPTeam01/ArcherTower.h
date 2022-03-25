@@ -43,7 +43,7 @@ public:
 	float ProjectileSpeed;
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile(AActor* target);
+	void SpawnProjectile(AActor* target, float timeUntil = 0.f, float offset = 0.f);
 
 	UFUNCTION(BlueprintCallable)
 	void BalistaRotation(AActor* target);

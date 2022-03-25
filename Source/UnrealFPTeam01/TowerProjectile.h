@@ -48,7 +48,7 @@ public:
 	float AngleOffset;
 
 	UFUNCTION()
-	void InitializeProjectile(AActor* targetToSet, float time = 0.f, float offset = 0.f);
+	void InitializeProjectile(AActor* targetToSet, float timeUntil = 0.f, float offset = 0.f);
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

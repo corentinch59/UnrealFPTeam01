@@ -20,8 +20,8 @@ ATowerProjectile::ATowerProjectile()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->HomingAccelerationMagnitude = 0.f;
 
-	SpawnTime = 0.f;
 	AngleOffset = 0.f;
+	SpawnTime = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -51,7 +51,11 @@ void ATowerProjectile::Tick(float DeltaTime)
 		FVector targetDir = (Target->GetActorLocation() - GetActorLocation());
 		float angle = FMath::Atan2(targetDir.GetSafeNormal().Y, targetDir.GetSafeNormal().X);
 
-		// TODO : Calculate the new direction with an offset in radiants and try to add it to the velocity
+		FVector NewDir = { FMath::Cos(angle + AngleOffset), FMath::Sin(angle + AngleOffset), 0.f };
+
+		ProjectileMovement->Velocity += NewDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
+		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+
 	}
 	else
 	{
@@ -63,11 +67,11 @@ void ATowerProjectile::Tick(float DeltaTime)
 	SpawnTime -= GetWorld()->DeltaTimeSeconds;
 }
 
-void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float time, float offset)
+void ATowerProjectile::InitializeProjectile(AActor* targetToSet, float timeUntil, float offset)
 {
 	Target = targetToSet;
-	SpawnTime = time;
 	AngleOffset = offset;
+	SpawnTime = timeUntil;
 }
 
 void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,

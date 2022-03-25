@@ -20,14 +20,20 @@ ATowerBase::ATowerBase()
 
 	RootComponent = MeshComponent;
 
-	ProjectileOrigin1 = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin1"));
-	ProjectileOrigin1->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-	ProjectileOrigin1->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
+	ProjectileOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin"));
+	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
 	TowerHealthOnRoad = 100;
 	TowerDamageOnRoad = 1;
 	TowerRangeRadiusOnRoad = 250.f;
 	TowerAttackRateOnRoad = 1.f;
+
+	TowerHealthOnSide = 100;
+	TowerDamageOnSide = 1;
+	TowerRangeRadiusOnSide = 250.f;
+	TowerAttackRateOnSide = 1.f;
+
 	TagOfEndPath = "EndPath";
 	isActive = true;
 	isInHand = false;
