@@ -5,6 +5,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "UnrealFPTeam01/UnrealFPTeam01Character.h"
+#include "UnrealFPTeam01/PlateauInteractable.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
@@ -22,23 +24,29 @@ ATowerBase::ATowerBase()
 	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
-	for (int i = 0; i < MeshComponent->GetNumMaterials(); ++i)
-	{
-		BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
-	}
+	TowerHealthOnRoad = 100;
+	TowerDamageOnRoad = 1;
+	TowerRangeRadiusOnRoad = 250.f;
+	TowerAttackRateOnRoad = 1.f;
 
-	TowerHealth = 100;
-	TowerDamage = 1;
-	TowerRangeRadius = 250.f;
-	TowerAttackRate = 1.f;
+	TowerHealthOnSide = 100;
+	TowerDamageOnSide = 1;
+	TowerRangeRadiusOnSide = 250.f;
+	TowerAttackRateOnSide = 1.f;
+
 	TagOfEndPath = "EndPath";
 	isActive = true;
+	isInHand = false;
 }
 
 // Called when the game starts or when spawned
 void ATowerBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	MeshComponent->OnClicked.AddDynamic(this, &ATowerBase::OnClicked);
 
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TagOfEndPath, EndPathActors);
 	if(EndPathActors.Num() > 1)
@@ -56,6 +64,19 @@ void ATowerBase::BeginPlay()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Couldn't find End Path ! %f"), GetWorld()->TimeSeconds));
 	}
+
+	if(MeshComponent->GetNumMaterials() > 0)
+	{
+		for (int i = 0; i < MeshComponent->GetNumMaterials(); i++)
+		{
+			BaseMeshMaterial.Add(MeshComponent->GetMaterial(i));
+		}
+	}
+
+	/*GLog->Log("Number of Base Materials : " + FString::FromInt(BaseMeshMaterial.Num()));
+	GLog->Log(BaseMeshMaterial[0]->GetName());*/
+
+	PlayerRef = static_cast<AUnrealFPTeam01Character*>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -63,6 +84,34 @@ void ATowerBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if(!PlayerRef->isFP && !isActive && !isInHand)
+	{
+		if(PlayerController->GetHitResultUnderCursorByChannel(TraceTypeQuery1, true, UnderMouseHit))
+		{
+			if(UnderMouseHit.Actor->ActorHasTag(TEXT("Road")))
+			{
+				this->SetActorLocation(UnderMouseHit.Location);
+				SetBluePlacement();
+			}
+			if(UnderMouseHit.Actor->ActorHasTag(TEXT("Side")))
+			{
+				this->SetActorLocation(UnderMouseHit.Location);
+				SetGreenPlacement();
+			}
+		}
+	}
+}
+
+void ATowerBase::OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed)
+{
+	if (MeshComponent->GetNumMaterials() > 0)
+	{
+		SetMeshMaterials();
+	}
+	isActive = true;
+	PlayerRef->ApplyConstruction();
+
+	GLog->Log("Clicked");
 }
 
 bool ATowerBase::CheckHit()
@@ -71,24 +120,39 @@ bool ATowerBase::CheckHit()
 
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectsTypeToQuerry;
 	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_Pawn));
-	//objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
+	objectsTypeToQuerry.Add(UEngineTypes::ConvertToObjectType(ECC_EngineTraceChannel4));
 
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(this);
-	actorsToIgnore.Add(EndPathActor);
-	//actorsToIgnore.Add(EndPathActors[1]);
+	actorsToIgnore.Add(PlayerRef);
 
-	bool bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadius, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+	bool bHasHit;
+	switch (TowerState)
+	{
+	case OnSide:
+		bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadiusOnSide, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+		break;
+	default:
+		bHasHit = UKismetSystemLibrary::SphereOverlapActors(GetWorld(), sphereOrigin, TowerRangeRadiusOnSide, objectsTypeToQuerry, nullptr, actorsToIgnore, ActorsHit);
+		break;
+	}
 
-	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadius, 40, FColor(255, 0, 0));
-
+	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadiusOnRoad, 40, FColor(255, 0, 0));
 
 	return bHasHit;
 }
 
 void ATowerBase::TowerTakeDamage(int damage)
 {
-	TowerHealth -= damage;
+	switch (TowerState)
+	{
+	case OnSide:
+		TowerHealthOnSide -= damage;
+		break;
+	default:
+		TowerHealthOnRoad -= damage;
+		break;
+	}
 }
 
 void ATowerBase::DestroyTower()
@@ -98,15 +162,50 @@ void ATowerBase::DestroyTower()
 
 void ATowerBase::SetGreenPlacement()
 {
-	
+	if (MeshComponent->GetNumMaterials() > 0)
+	{
+		for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+		{
+			MeshComponent->SetMaterial(i, GreenMaterial);
+		}
+	}
+
+	isActive = false;
+	TowerState = OnSide;
 }
 
-AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
+void ATowerBase::SetBluePlacement()
+{
+	if (MeshComponent->GetNumMaterials() > 0)
+	{
+		for (int i = 0; i <BaseMeshMaterial.Num(); i++)
+		{
+			MeshComponent->SetMaterial(i, BlueMaterial);
+		}
+	}
+
+	isActive = false;
+	TowerState = OnRoad;
+}
+
+void ATowerBase::SetMeshMaterials()
+{
+	if (MeshComponent->GetNumMaterials() > 0)
+	{
+		for (int i = 0; i < BaseMeshMaterial.Num(); i++)
+		{
+			MeshComponent->SetMaterial(i, BaseMeshMaterial[i]);
+		}
+	}
+
+	isActive = true;
+}
+
+
+AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray, TArray<AActor*>& TargetsToIgnore)
 {
 	AActor* Target = ActorsArray[0];
 	FVector closestTarget = Target->GetActorLocation();
-	FVector test = EndPathActor->GetActorLocation();
-
 	if (ActorsArray.Num() != 0)
 	{
 		for (int i = 0; i < ActorsArray.Num(); i++)
@@ -116,15 +215,28 @@ AActor* ATowerBase::FindTarget(TArray<AActor*>& ActorsArray)
 
 			if (Distance1.Size() <= Distance2.Size())
 			{
-				Target = ActorsArray[i];
-				closestTarget = Target->GetActorLocation();
+				if (TargetsToIgnore.Num() > 0 && ActorsHit.Num() < 0)
+				{
+					for(int j = 0; j < TargetsToIgnore.Num(); j++)
+					{
+						if(ActorsArray[i] != TargetsToIgnore[j])
+						{
+							Target = ActorsArray[i];
+							closestTarget = Target->GetActorLocation();
+						}
+					}
+				} else
+				{
+					Target = ActorsArray[i];
+					closestTarget = Target->GetActorLocation();
+				}
 			}
 		}
 	} else
 	{
 		GLog->Log(FString::FromInt(ActorsArray.Num()));
 	}
-
+	TargetsToIgnore.Add(Target);
 	return Target;
 }
 
@@ -135,10 +247,13 @@ void ATowerBase::RotateTowardTarget(AActor* target)
 	this->SetActorRotation(newRotation);
 }
 
-// Called to bind functionality to input
-void ATowerBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ATowerBase::InitializeTower()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	isActive = false;
+	if(!isActive)
+	{
+		MeshComponent->SetCollisionProfileName(TEXT("NoCollisionC"));
+	}
 
 }
 

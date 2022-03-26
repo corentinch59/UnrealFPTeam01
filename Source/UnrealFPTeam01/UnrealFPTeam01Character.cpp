@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "UnrealFPTeam01Character.h"
+
+#include <string>
+
 #include "UnrealFPTeam01Projectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
@@ -9,6 +12,9 @@
 #include "GameFramework/InputSettings.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "UnrealFPTeam01/ArcherTower.h"
+#include "UnrealFPTeam01/BarbouTower.h"
+#include "UnrealFPTeam01/TowerBase.h"
 #include "MotionControllerComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -42,29 +48,8 @@ AUnrealFPTeam01Character::AUnrealFPTeam01Character()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
-	// Get every tower meshes
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ArcherTowerAsset(TEXT("/Game/FirstPerson/GA/Characters/tour_archer"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> KnightTowerAsset(TEXT("/Game/FirstPerson/GA/Characters/chevalier_fix"));
+	TowerType = None;
 
-	// Setup the meshes that will be held
-	TowerInHand = CreateDefaultSubobject<USceneComponent>(TEXT("TowerInHand"));
-	TowerInHand->SetupAttachment(RootComponent);
-	TowerInHand->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-
-	// Setup for the ArcherTower
-	TowerInHand->SetRelativeScale3D(FVector(0.15f, 0.15f, 0.15f));
-	TowerInHand->SetRelativeLocation(FVector(-35.f, 27.f, 0.f));
-	TowerInHand->SetRelativeRotation(FRotator(10.f,0.f,0.f));
-
-	ArcherTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArcherTowerMesh"));
-	ArcherTowerMesh->SetupAttachment(RootComponent);
-	ArcherTowerMesh->AttachToComponent(TowerInHand, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
-	ArcherTowerMesh->SetStaticMesh(ArcherTowerAsset.Object);
-
-	KnightTowerMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KnightTowerMesh"));
-	KnightTowerMesh->SetupAttachment(RootComponent);
-	KnightTowerMesh->AttachToComponent(TowerInHand, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true));
-	KnightTowerMesh->SetStaticMesh(KnightTowerAsset.Object);
 }
 
 void AUnrealFPTeam01Character::BeginPlay()
@@ -73,8 +58,7 @@ void AUnrealFPTeam01Character::BeginPlay()
 	Super::BeginPlay();
 
 	Mesh1P->SetVisibility(false);
-	ArcherTowerMesh->SetVisibility(false);
-
+	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,11 +141,13 @@ void AUnrealFPTeam01Character::SwitchCamera()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("First Person Camera %f"), GetWorld()->TimeSeconds));
 		/* Enable Looking and Moving inputs */
+		PlayerController->bEnableClickEvents = false;
 		GetWorld()->GetFirstPlayerController()->SetIgnoreLookInput(false);
 		GetWorld()->GetFirstPlayerController()->SetIgnoreMoveInput(false);
 		/* Disable mouse cursor */
 		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(false);
 
+		ClearConstruction();
 		isFP = true;
 
 		break;
@@ -172,12 +158,15 @@ void AUnrealFPTeam01Character::SwitchCamera()
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Tabletop Camera %f"), GetWorld()->TimeSeconds));
 		/* Disable Looking and Moving inputs */
+		PlayerController->bEnableClickEvents = true;
+
 		GetWorld()->GetFirstPlayerController()->SetIgnoreLookInput(true);
 		GetWorld()->GetFirstPlayerController()->SetIgnoreMoveInput(true);
 		/* Show the mouse cursor */
 		GetWorld()->GetFirstPlayerController()->SetShowMouseCursor(true);
 
 		isFP = false;
+		ConstructionMode = true;
 
 		break;
 	}
@@ -195,14 +184,81 @@ void AUnrealFPTeam01Character::InteractWObject()
 	if(!isFP)
 	{
 		SwitchCamera();
-		return;
+			return;
 	}
 
 	ATowerBox* TowerBox = Cast<ATowerBox>(interactableObj.Actor);
 	if (TowerBox)
 	{
-		TowerHeldType = TowerBox->BoxType;
+		ClearHand();
+		switch (TowerBox->BoxType)
+		{
+		case 0:
+			{
+				FTransform SpawnLocation = {Mesh1P->GetRelativeRotation(), Mesh1P->GetComponentLocation(), FVector(1.f,1.f,1.f)};
+				AArcherTower* NewTower = GetWorld()->SpawnActorDeferred<AArcherTower>(ArcherTowerSpawn, SpawnLocation);
+				NewTower->BaseComponent->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("GripPoint"));
+				NewTower->isInHand = true;
+				NewTower->InitializeTower();
+				NewTower->FinishSpawning(SpawnLocation);
+				HeldTowerRef = NewTower;
+				GLog->Log("Spawned Actor in hand");
+				TowerType = ArcherTower;
+				break;
+			}
+		case 1:
+			{
+				break;
+			}
+		case 2:
+			{
+				FTransform SpawnLocation = { Mesh1P->GetRelativeRotation(), Mesh1P->GetComponentLocation(), FVector(1.f,1.f,1.f) };
+				ABarbouTower* NewTower = GetWorld()->SpawnActorDeferred<ABarbouTower>(BarbouTowerSpawn, SpawnLocation);
+				NewTower->BarbouBody->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("GripPoint"));
+				NewTower->isInHand = true;
+				NewTower->InitializeTower();
+				NewTower->FinishSpawning(SpawnLocation);
+				HeldTowerRef = NewTower;
+				TowerType = BarbouTower;
+				break;
+			}
+		default:
+			{
+				break;
+			}
+		};
 
+	}
+}
+
+void AUnrealFPTeam01Character::ClearHand()
+{
+	if(HeldTowerRef != nullptr)
+	{
+		HeldTowerRef->Destroy();
+		HeldTowerRef = nullptr;
+
+		TowerType = None;
+	}
+	GLog->Log("Hand Cleared");
+}
+
+void AUnrealFPTeam01Character::ClearConstruction()
+{
+	if(ConstructTowerRef != nullptr)
+	{
+		ConstructTowerRef->Destroy();
+		ConstructTowerRef = nullptr;
+	}
+	GLog->Log("Construction Cleared");
+}
+
+void AUnrealFPTeam01Character::ApplyConstruction()
+{
+	if(ConstructTowerRef != nullptr)
+	{
+		ClearHand();
+		ConstructTowerRef = nullptr;
 	}
 }
 
@@ -222,4 +278,37 @@ void AUnrealFPTeam01Character::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if(!isFP && HeldTowerRef != nullptr && ConstructionMode)
+	{
+		switch (TowerType)
+		{
+		case 0:
+			break;
+		case 1:
+			{
+				FTransform SpawnLocation = { FRotator(0.f,0.f,0.f), Mesh1P->GetComponentLocation(), FVector(0.2f,0.2f,0.2f)};
+				AArcherTower* ArcherTower = GetWorld()->SpawnActorDeferred<AArcherTower>(ArcherTowerSpawn, SpawnLocation);
+				ArcherTower->SetActorRelativeScale3D(FVector(0.2f, 0.2f, 0.2f));
+				ArcherTower->InitializeTower();
+				ArcherTower->FinishSpawning(SpawnLocation);
+				ConstructTowerRef = ArcherTower;
+				ConstructionMode = false;
+				GLog->Log("Spawned Actor on table");
+			}
+			break;
+		case 3:
+			{
+				FTransform SpawnLocation = { FRotator(0.f,0.f,0.f), Mesh1P->GetComponentLocation(), FVector(0.2f,0.2f,0.2f) };
+				ABarbouTower* BarbouTower = GetWorld()->SpawnActorDeferred<ABarbouTower>(BarbouTowerSpawn, SpawnLocation);
+				BarbouTower->SetActorRelativeScale3D(FVector(0.2f, 0.2f, 0.2f));
+				BarbouTower->InitializeTower();
+				BarbouTower->FinishSpawning(SpawnLocation);
+				ConstructTowerRef = BarbouTower;
+				ConstructionMode = false;
+				GLog->Log("Spawned Actor on table");
+			}
+		default:
+			break;
+		}
+	}
 }

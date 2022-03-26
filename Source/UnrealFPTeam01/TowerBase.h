@@ -9,6 +9,8 @@
 #include "Blueprint/UserWidget.h"
 #include "TowerBase.generated.h"
 
+class AUnrealFPTeam01Character;
+
 UENUM()
 enum TowerState
 {
@@ -37,30 +39,52 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY()
-		float AttackCooldown;
+	float AttackCooldown;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void InitializeTower();
 
+	UFUNCTION()
+	virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	int TowerHealth;
+	int TowerHealthOnRoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
 	int MaxTowerHealth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	int TowerDamage;
+	int TowerDamageOnRoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	float TowerRangeRadius;
+	float TowerRangeRadiusOnRoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=TowerStats)
-	float TowerAttackRate;
+	float TowerAttackRateOnRoad;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	int TowerHealthOnSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	int TowerDamageOnSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	float TowerRangeRadiusOnSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = TowerStats)
+	float TowerAttackRateOnSide;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> ActorsHit;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> IgnoreTargets;
+
+	UPROPERTY()
+	FHitResult UnderMouseHit;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> EndPathActors;
@@ -83,8 +107,17 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FName TagOfEndPath;
 
+	UPROPERTY()
+	APlayerController* PlayerController;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	AUnrealFPTeam01Character* PlayerRef;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool isActive;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool isInHand;
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckHit();
@@ -99,12 +132,16 @@ public:
 	virtual void SetGreenPlacement();
 
 	UFUNCTION(BlueprintCallable)
-	AActor* FindTarget(TArray<AActor*>& ActorsArray);
+	virtual void SetBluePlacement();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetMeshMaterials();
+
+	UFUNCTION(BlueprintCallable)
+	AActor* FindTarget(TArray<AActor*>& ActorsArray, TArray<AActor*>& TargetsToIgnore);
 
 	UFUNCTION(BlueprintCallable)
 	void RotateTowardTarget(AActor* target);
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };
+

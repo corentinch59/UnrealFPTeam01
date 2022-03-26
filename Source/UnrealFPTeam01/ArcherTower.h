@@ -20,7 +20,17 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void BeginPlay() override;
+
 	virtual void SetGreenPlacement() override;
+
+	virtual void SetBluePlacement() override;
+
+	virtual void SetMeshMaterials() override;
+
+	virtual void InitializeTower() override;
+
+	virtual void OnClicked(UPrimitiveComponent* TouchedComponent, FKey ButtonPressed) override;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BaseComponent;
@@ -35,7 +45,7 @@ public:
 	float ProjectileSpeed;
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile(AActor* target);
+	void SpawnProjectile(AActor* target, float timeUntil = 0.f, float offset = 0.f);
 
 	UFUNCTION(BlueprintCallable)
 	void BalistaRotation(AActor* target);

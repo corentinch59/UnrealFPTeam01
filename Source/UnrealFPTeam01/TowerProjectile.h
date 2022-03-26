@@ -5,9 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "TowerBase.h"
 #include "TowerProjectile.generated.h"
 
+class ATowerBase;
 
 UCLASS()
 class UNREALFPTEAM01_API ATowerProjectile : public AActor
@@ -25,9 +25,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* MeshComponent;
 
-	UPROPERTY(EditAnywhere)
-	ATowerBase* parentTower;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,12 +40,21 @@ public:
 	float lifeTime;
 
 	UPROPERTY(EditAnywhere)
+	float SpawnTime;
+
+	UPROPERTY(EditAnywhere)
 	float ProjectileSpeed;
 
-	UFUNCTION()
-	void InitializeProjectile(AActor* targetToSet,ATowerBase* parent);
+	UPROPERTY(EditAnywhere)
+	float AngleOffset;
+
+	UPROPERTY()
+	ATowerBase* parentTower;
 
 	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void InitializeProjectile(AActor* targetToSet, ATowerBase* ParentTowerSet, float timeUntil = 0.f, float offset = 0.f);
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 };

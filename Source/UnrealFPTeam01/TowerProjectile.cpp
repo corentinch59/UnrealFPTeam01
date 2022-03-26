@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "UnrealFPTeam01/TowerBase.h"
 #include "TowerProjectile.h"
-#include "Enemy.h"
 
 // Sets default values
 ATowerProjectile::ATowerProjectile()
@@ -14,13 +14,15 @@ ATowerProjectile::ATowerProjectile()
 	MeshComponent->SetEnableGravity(false);
 	RootComponent = MeshComponent;
 
-
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Projectile Movement"));
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 	ProjectileMovement->InitialSpeed = ProjectileSpeed;
 	ProjectileMovement->bIsHomingProjectile = false;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->HomingAccelerationMagnitude = 0.f;
+
+	AngleOffset = 0.f;
+	SpawnTime = 0.f;
 }
 
 // Called when the game starts or when spawned
@@ -45,31 +47,53 @@ void ATowerProjectile::Tick(float DeltaTime)
 	}
 	lifeTime -= GetWorld()->DeltaTimeSeconds;
 
-	FVector WantedDir = (Target->GetActorLocation() - GetActorLocation());
-	WantedDir += Target->GetVelocity() * WantedDir.Size() / ProjectileSpeed;
-	ProjectileMovement->Velocity += WantedDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
-	ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+	if(SpawnTime >= 0.f)
+	{
+		FVector targetDir = (Target->GetActorLocation() - GetActorLocation());
+		float angle = FMath::Atan2(targetDir.GetSafeNormal().Y, targetDir.GetSafeNormal().X);
+
+		FVector NewDir = { FMath::Cos(angle + AngleOffset), FMath::Sin(angle + AngleOffset), 0.f };
+
+		ProjectileMovement->Velocity += NewDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
+		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+
+	}
+	else
+	{
+		FVector WantedDir = (Target->GetActorLocation() - GetActorLocation());
+		WantedDir += Target->GetVelocity() * WantedDir.Size() / ProjectileSpeed;
+		ProjectileMovement->Velocity += WantedDir * ProjectileSpeed * GetWorld()->DeltaTimeSeconds;
+		ProjectileMovement->Velocity = ProjectileMovement->Velocity.GetSafeNormal() * ProjectileSpeed;
+	}
+	SpawnTime -= GetWorld()->DeltaTimeSeconds;
 }
 
-void ATowerProjectile::InitializeProjectile(AActor* targetToSet,ATowerBase* parent)
+void ATowerProjectile::InitializeProjectile(AActor* targetToSet, ATowerBase* ParentTowerSet, float timeUntil, float offset)
 {
 	Target = targetToSet;
-	parentTower = parent;
+	parentTower = ParentTowerSet;
+	AngleOffset = offset;
+	SpawnTime = timeUntil;
 }
 
 void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                              FVector NormalImpulse, const FHitResult& Hit)
-{ // Tower Projectile touche un ennemi 
+{
 	AEnemy* enemy = Cast<AEnemy>(OtherActor);
+	if(enemy ==  nullptr)
+	{
+		GLog->Log("enemy null");
+		Destroy();
+		return;
+	}
 
 	if(!enemy || !parentTower)
 		return;
 	
-	GLog->Log("attack");
-	enemy->TakeDamage(parentTower->TowerDamage);
+	GLog->Log("hit enemy");
+
+	enemy->TakeDamage(parentTower->TowerState == OnSide ? parentTower->TowerDamageOnSide : parentTower->TowerDamageOnRoad);
 	
-	if (!IsPendingKill()) {
-		Destroy();
-	}
+	Destroy();
 }
 
