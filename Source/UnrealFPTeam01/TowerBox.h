@@ -31,6 +31,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TEnumAsByte<BoxType> BoxType;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<AActor*> SpawnPoints;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

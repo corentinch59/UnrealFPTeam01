@@ -20,7 +20,13 @@ void ATowerBox::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	if(SpawnPoints.Num() > 0 )
+	{
+		int randomNumber = FMath::RandRange(0, SpawnPoints.Num() - 1);
+
+		this->SetActorLocation(SpawnPoints[randomNumber]->GetActorLocation());
+		this->SetActorRotation(SpawnPoints[randomNumber]->GetActorRotation());
+	}
 }
 
 // Called every frame
