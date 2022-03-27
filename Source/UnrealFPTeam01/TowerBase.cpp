@@ -21,7 +21,7 @@ ATowerBase::ATowerBase()
 	RootComponent = MeshComponent;
 
 	ProjectileOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileOrigin"));
-	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	ProjectileOrigin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	ProjectileOrigin->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 
 	TowerHealthOnRoad = 100;
