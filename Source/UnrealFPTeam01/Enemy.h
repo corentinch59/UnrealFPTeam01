@@ -55,7 +55,7 @@ public:
     virtual void Reload();
 
     UFUNCTION()
-    virtual void TakeDamage(float damage);
+    virtual void ApplyDamage(float damage);
 
 
     UPROPERTY()

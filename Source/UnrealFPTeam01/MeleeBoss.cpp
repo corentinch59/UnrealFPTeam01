@@ -1,7 +1,14 @@
 #include "MeleeBoss.h"
+#include "Kismet/GameplayStatics.h"
+#include "WaveController.h"
 
 AMeleeBoss::AMeleeBoss() {
 	attackDamage = initialDamage;
+}
+
+void AMeleeBoss::BeginPlay() {
+	Super::BeginPlay();
+	waveController = Cast<AWaveController>(UGameplayStatics::GetActorOfClass(GetWorld(), AWaveController::StaticClass()));
 }
 
 void AMeleeBoss::Attack(ATowerBase* tower) {
@@ -12,15 +19,13 @@ void AMeleeBoss::Attack(ATowerBase* tower) {
 		if (tower != targetTower)
 			attackDamage = initialDamage;
 	}
-
-	this->PlayAnimMontage(animMontage, 1, NAME_None);
 	
 	Super::Attack(tower);
 }
 
 
-void AMeleeBoss::TakeDamage(float damage) {
-	Super::TakeDamage(damage);
+void AMeleeBoss::ApplyDamage(float damage) {
+	Super::ApplyDamage(damage);
 
 	if (health <= 0) 
 		waveController->OnKilledBoss();

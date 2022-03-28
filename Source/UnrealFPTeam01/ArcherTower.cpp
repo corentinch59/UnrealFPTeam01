@@ -14,7 +14,7 @@ AArcherTower::AArcherTower()
 	RootComponent = BaseComponent;
 
 	MeshComponent->SetCollisionProfileName(TEXT("TowerP"));
-	MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	MeshComponent->SetRelativeLocation(FVector(0, 0, 100.f));
 
 	ProjectileOrigin->SetRelativeLocation(FVector(26.f, 0.f, 47.f));

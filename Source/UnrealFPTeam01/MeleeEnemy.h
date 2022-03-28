@@ -11,10 +11,6 @@ class UNREALFPTEAM01_API AMeleeEnemy : public AEnemy {
 public:
 	AMeleeEnemy();
 
-
 	void Attack(ATowerBase* base) override;
 
-
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* animMontage;
 };

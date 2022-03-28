@@ -6,7 +6,7 @@
 #include "MeleeBoss.h"
 
 UMeleeAttackNotify::UMeleeAttackNotify() {
-	cancelAttack = true;
+	
 }
 
 void UMeleeAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) {
@@ -14,10 +14,6 @@ void UMeleeAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 	GLog->Log("notify");
 
 	if (MeshComp->GetAttachmentRootActor()->IsA(AEnemy::StaticClass())) {
-		if (cancelAttack) {
-			cancelAttack = false;
-			return;
-		}
 
 		AEnemy* enemy = Cast<AEnemy>(MeshComp->GetAttachmentRootActor());
 
@@ -39,6 +35,5 @@ void UMeleeAttackNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 			castle->ApplyDamage(damage);
 		}
 
-		cancelAttack = !cancelAttack;
 	}
 }

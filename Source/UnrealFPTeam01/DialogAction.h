@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Sound/SoundBase.h"
-#include "Blueprint/UserWidget.h"
 #include "DialogController.h"
 #include "DialogAction.generated.h"
 

@@ -12,8 +12,8 @@ ABarbouTower::ABarbouTower()
 	RootComponent = BarbouBody;
 
 	BarbouBatte = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("BarbouBatte"));
-	BarbouBatte->AttachToComponent(BarbouBody, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("LeftHand"));
-	BarbouBatte->SetCollisionProfileName(TEXT("TowerP"));
+	BarbouBatte->AttachToComponent(BarbouBody, FAttachmentTransformRules::KeepRelativeTransform, TEXT("LeftHand"));
+	//BarbouBatte->SetCollisionProfileName(TEXT("TowerP"));
 
 }
 
@@ -22,7 +22,7 @@ void ABarbouTower::BashEnemy(TArray<AActor*> ActorsToHit)
 	for(int i = 0; i < ActorsToHit.Num(); i++)
 	{
 		AEnemy* enemy = static_cast<AEnemy*>(ActorsToHit[i]);
-		enemy->TakeDamage(this->TowerState == OnRoad ? this->TowerDamageOnRoad : this->TowerDamageOnSide);
+		enemy->ApplyDamage(this->TowerState == OnRoad ? this->TowerDamageOnRoad : this->TowerDamageOnSide);
 	}
 }
 

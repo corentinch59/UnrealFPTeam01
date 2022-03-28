@@ -31,7 +31,10 @@ void AWaveController::SpawnWave() {
 		GetWorld()->GetTimerManager().ClearTimer(timerHandle);
 		if (generateWave) {
 			actualWave = waves[actualWaveId];
-			UDialogAction* currentDialogAction = Cast<UDialogAction>(this->GetComponentsByClass(UDialogAction::StaticClass())[actualWaveId]);
+			UDialogAction* currentDialogAction = Cast<UDialogAction>(this->GetComponentsByClass(UDialogAction::StaticClass())[(this->GetComponentsByClass(UDialogAction::StaticClass()).Num() - 1 )  - actualWaveId]);
+
+			GLog->Log(currentDialogAction->dialogs[0].ToString());
+
 
 			if (currentDialogAction && dialogController)
 				dialogController->OnDialogSpawned(currentDialogAction->dialogs[0], currentDialogAction->sounds[0]);

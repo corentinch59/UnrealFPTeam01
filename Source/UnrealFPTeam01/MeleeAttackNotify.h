@@ -19,6 +19,4 @@ public:
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
-	UPROPERTY()
-	bool cancelAttack;
 };

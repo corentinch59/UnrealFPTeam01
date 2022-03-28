@@ -6,7 +6,6 @@
 #include "GameFramework/Pawn.h"
 #include "UnrealFPTeam01/TowerProjectile.h"
 #include "UnrealFPTeam01/Enemy.h"
-#include "Blueprint/UserWidget.h"
 #include "TowerBase.generated.h"
 
 class AUnrealFPTeam01Character;

@@ -6,7 +6,6 @@
 #include "WaveConfig.h"
 #include "Components/SplineComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "Blueprint/UserWidget.h"
 #include "WaveController.generated.h"
 
 UCLASS()

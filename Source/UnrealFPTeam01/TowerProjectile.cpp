@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UnrealFPTeam01/TowerBase.h"
 #include "TowerProjectile.h"
+#include "UnrealFPTeam01/TowerBase.h"
 
 // Sets default values
 ATowerProjectile::ATowerProjectile()
@@ -92,7 +92,7 @@ void ATowerProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 	
 	GLog->Log("hit enemy");
 
-	enemy->TakeDamage(parentTower->TowerState == OnSide ? parentTower->TowerDamageOnSide : parentTower->TowerDamageOnRoad);
+	enemy->ApplyDamage(parentTower->TowerState == OnSide ? parentTower->TowerDamageOnSide : parentTower->TowerDamageOnRoad);
 	
 	Destroy();
 }

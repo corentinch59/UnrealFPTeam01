@@ -41,6 +41,7 @@ void AEnemy::Tick(float DeltaTime) {
 	if (aiController && aiController->GetBlackboardComponent()->GetValueAsBool(FName("DetectTowers")) && !isAttacking ) {
 		Attack(Cast<ATowerBase>(aiController->GetBlackboardComponent()->GetValueAsObject(FName("DetectedTowers"))));
 		GLog->Log("begin attack");
+		GLog->Log(this->GetName());
 	}
 
 }
@@ -63,7 +64,7 @@ void AEnemy::Reload() {
 	}
 }
 
-void AEnemy::TakeDamage(float damage) {
+void AEnemy::ApplyDamage(float damage) {
 	health -= damage;
 	health = FMath::Clamp(health,0.f,maxHealth);
 
