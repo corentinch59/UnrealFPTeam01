@@ -25,7 +25,8 @@ enum TowerType
 	None			UMETA(DisplayName = "None"),
 	ArcherTower		UMETA(DisplayName = "Archer Tower"),
 	KnightTower		UMETA(DisplayName = "Knight Tower"),
-	BarbouTower		UMETA(DisplayName = "Barbou Tower")
+	BarbouTower		UMETA(DisplayName = "Barbou Tower"),
+	NorbertTower    UMETA(DisplayName = "Norbert Tower")
 };
 
 UCLASS(config=Game)
@@ -58,6 +59,9 @@ class AUnrealFPTeam01Character : public ACharacter
 
 	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
 	TSubclassOf<ABarbouTower> BarbouTowerSpawn;
+
+	UPROPERTY(EditAnywhere, Category = TowersToSpawn)
+	TSubclassOf<ATowerBase> NorbertTowerSpawn;
 
 public:
 	AUnrealFPTeam01Character();
