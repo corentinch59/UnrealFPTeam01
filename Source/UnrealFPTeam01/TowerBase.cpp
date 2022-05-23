@@ -136,7 +136,7 @@ bool ATowerBase::CheckHit()
 		break;
 	}
 
-	DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadiusOnRoad, 40, FColor(255, 0, 0));
+	//DrawDebugSphere(GetWorld(), sphereOrigin, TowerRangeRadiusOnRoad, 40, FColor(255, 0, 0));
 
 	return bHasHit;
 }
